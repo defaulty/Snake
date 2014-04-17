@@ -16,12 +16,19 @@
 
 package com.example.android.snake;
 
+import java.util.Timer;
+import java.util.TimerTask;
+
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.MotionEvent;
+import android.view.View;
 import android.view.Window;
 import android.widget.TextView;
+import android.widget.Toast;
 
 /**
  * Snake: a simple game that everyone can enjoy.
@@ -33,9 +40,6 @@ import android.widget.TextView;
  * 
  */
 public class Snake extends Activity {
-
-    private SnakeView mSnakeView;
-    
     private static String ICICLE_KEY = "snake-view";
 
     /**
@@ -43,6 +47,35 @@ public class Snake extends Activity {
      * the content views, and fires up the SnakeView.
      * 
      */
+    private static Boolean isExit = false;  
+    private static Boolean hasTask = false;  
+    Timer tExit = new Timer();  
+    TimerTask task = new TimerTask() {  
+        @Override  
+        public void run() {  
+            isExit = false;  
+            hasTask = true;  
+        }
+    };
+
+    @Override  
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+//        System.out.println("TabHost_Index.java onKeyDown");  
+        if (keyCode == KeyEvent.KEYCODE_BACK) {  
+            if(isExit == false ) {
+                isExit = true;
+                Toast.makeText(this, getResources().getString(R.string.quit_tips), Toast.LENGTH_SHORT).show();
+                if(!hasTask) {
+                    tExit.schedule(task, 2000);
+                }
+            } else {
+                finish();
+                System.exit(0);
+            }  
+        }
+        return false;  
+    }
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -50,38 +83,45 @@ public class Snake extends Activity {
         // No Title bar
         requestWindowFeature(Window.FEATURE_NO_TITLE);
 
-        setContentView(R.layout.snake_layout);
-
-        mSnakeView = (SnakeView) findViewById(R.id.snake);
-        mSnakeView.setTextView((TextView) findViewById(R.id.text));
-
-        if (savedInstanceState == null) {
-            // We were just launched -- set up a new game
-            mSnakeView.setMode(SnakeView.READY);
-        } else {
-            // We are being restored
-            Bundle map = savedInstanceState.getBundle(ICICLE_KEY);
-            if (map != null) {
-                mSnakeView.restoreState(map);
-            } else {
-                mSnakeView.setMode(SnakeView.PAUSE);
-            }
-        }
+        setContentView(R.layout.snake_start_layout);
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        
+
         // Pause the game along with the activity
-        mSnakeView.setMode(SnakeView.PAUSE);
+//        mSnakeView.setMode(SnakeView.PAUSE);
     }
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
         //Store the game state
-        Log.i("zzz", "onSaveInstanceState");
-        outState.putBundle(ICICLE_KEY, mSnakeView.saveState());
+//        outState.putBundle(ICICLE_KEY, mSnakeView.saveState());
     }
 
+    public void startGame(View view) {
+		Intent intent = new Intent(this, Game.class);
+		startActivity(intent);
+
+//    	mSnakeView = (SnakeView) findViewById(R.id.snake);
+//        if(mSnakeView == null) {
+//        	Log.i("zzz", "snakeview is null!!!");
+//        }
+//        mSnakeView.setMode(SnakeView.RUNNING);
+//        mSnakeView.setTextView((TextView) findViewById(R.id.text));
+
+//        if (savedInstanceState == null) {
+//            // We were just launched -- set up a new game
+//            mSnakeView.setMode(SnakeView.READY);
+//        } else {
+//            // We are being restored
+//            Bundle map = savedInstanceState.getBundle(ICICLE_KEY);
+//            if (map != null) {
+//                mSnakeView.restoreState(map);
+//            } else {
+//                mSnakeView.setMode(SnakeView.PAUSE);
+//            }
+//        }
+    }
 }

@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.Random;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.res.Resources;
 import android.content.res.TypedArray;
 import android.graphics.Bitmap;
@@ -47,6 +48,7 @@ import android.widget.TextView;
  * 
  */
 public class SnakeView extends SurfaceView implements Callback, Runnable {
+	public static final String FINAL_SCORE = "FINAL_SCORE";
 
 	private static final String TAG = "SnakeView";
 
@@ -182,24 +184,24 @@ public class SnakeView extends SurfaceView implements Callback, Runnable {
 
 	@Override
 	protected void onSizeChanged(int w, int h, int oldw, int oldh) {
-		mWidth = w;
-		mHeight = h;
-
-		mXTileCount = (int) Math.floor(w / mTileSize);
-		mYTileCount = (int) Math.floor(h / mTileSize);
-
-		mXOffset = ((w - (mTileSize * mXTileCount)) / 2);
-		mYOffset = ((h - (mTileSize * mYTileCount)) / 2);
-
-		mTileGrid = new int[mXTileCount][mYTileCount];
-		clearTiles();
-
-		mPaint.setColor(Color.rgb(29, 56, 13));
-		mPaint.setTextAlign(Paint.Align.LEFT);
-		mPaint.setFakeBoldText(true);
-		mPaint.setTextSize(12);
-		mPaintR.setColor(Color.rgb(29, 56, 13));
-		mPaintR.setTextAlign(Paint.Align.RIGHT);
+//		mWidth = w;
+//		mHeight = h;
+//
+//		mXTileCount = (int) Math.floor(w / mTileSize);
+//		mYTileCount = (int) Math.floor(h / mTileSize);
+//
+//		mXOffset = ((w - (mTileSize * mXTileCount)) / 2);
+//		mYOffset = ((h - (mTileSize * mYTileCount)) / 2);
+//
+//		mTileGrid = new int[mXTileCount][mYTileCount];
+//		clearTiles();
+//
+//		mPaint.setColor(Color.rgb(29, 56, 13));
+//		mPaint.setTextAlign(Paint.Align.LEFT);
+//		mPaint.setFakeBoldText(true);
+//		mPaint.setTextSize(12);
+//		mPaintR.setColor(Color.rgb(29, 56, 13));
+//		mPaintR.setTextAlign(Paint.Align.RIGHT);
 	}
 
 	private void initSnakeView() {
@@ -274,6 +276,7 @@ public class SnakeView extends SurfaceView implements Callback, Runnable {
 		case PAUSE:
 			break;
 		case LOSE:
+			canvas.drawARGB(155, 0, 0, 0);
 			break;
 		case RUNNING:
 			for (int x = 1; x < mXTileCount - 1; x += 1) {
@@ -288,7 +291,7 @@ public class SnakeView extends SurfaceView implements Callback, Runnable {
 		}
 	}
 
-	private void initNewGame() {
+	protected void initNewGame() {
 		mSnakeTrail.clear();
 		mAppleList.clear();
 
@@ -424,51 +427,57 @@ public class SnakeView extends SurfaceView implements Callback, Runnable {
 				setMode(RUNNING);
 				update();
 			} else if (mMode == RUNNING) {
-				int direction = 0;
-
 				float currentX = event.getX();
-				if (currentX == mPressPointX) {
-					if (currentX < (mWidth / 2)) {
-						direction = -1;
-					} else if (currentX >= (mWidth / 2)) {
-						direction = 1;
-					}
-				} else if (currentX < mPressPointX) {
-					direction = -1;
-				} else if (currentX > mPressPointX) {
-					direction = 1;
+				float currentY = event.getY();
+
+				float differX = Math.abs(mPressPointX - currentX);
+				float differY = Math.abs(mPressPointY - currentY);
+
+				if(differX == differY) { // it's a click event, ignore it;
+					break;
 				}
 
-				switch (mDirection) {
-				case NORTH:
-					if (direction < 0) {
-						mNextDirection = WEST;
-					} else if (direction > 0) {
-						mNextDirection = EAST;
+				switch (mControlMode) {
+				case 1:                          // Control mode I, four directions;
+					switch (mDirection) {
+					case NORTH:
+					case SOUTH:
+						if(differX > differY) {
+							if(currentX > mPressPointX) {
+								mNextDirection = EAST;
+							} else if(currentX < mPressPointX) {
+								mNextDirection = WEST;
+							}
+						}
+						break;
+					case WEST:
+					case EAST:
+						if(differX < differY) {
+							if(currentY > mPressPointY) {
+								mNextDirection = SOUTH;
+							} else if(currentY < mPressPointY) {
+								mNextDirection = NORTH;
+							}
+						}
+						break;
 					}
 					break;
-				case SOUTH:
-					if (direction < 0) {
-						mNextDirection = EAST;
-					} else if (direction > 0) {
-						mNextDirection = WEST;
-					}
-					break;
-				case WEST:
-					if (direction < 0) {
-						mNextDirection = SOUTH;
-					} else if (direction > 0) {
-						mNextDirection = NORTH;
-					}
-					break;
-				case EAST:
-					if (direction < 0) {
-						mNextDirection = NORTH;
-					} else if (direction > 0) {
-						mNextDirection = SOUTH;
-					}
+				case 2:
+					//TODO Control Mode II
+//					if (currentX == mPressPointX) {
+//						if (currentX < (mWidth / 2)) {
+//							direction = -1;
+//						} else if (currentX >= (mWidth / 2)) {
+//							direction = 1;
+//						}
+//					} else if (currentX < mPressPointX) {
+//						direction = -1;
+//					} else if (currentX > mPressPointX) {
+//						direction = 1;
+//					}
 					break;
 				}
+
 			}
 
 			break;
@@ -556,17 +565,23 @@ public class SnakeView extends SurfaceView implements Callback, Runnable {
 			return;
 		}
 
-		Resources res = getContext().getResources();
-		CharSequence str = "";
-		if (newMode == PAUSE) {
-			str = res.getText(R.string.mode_pause);
-		}
-		if (newMode == READY) {
-			str = res.getText(R.string.mode_ready);
-		}
+//		Resources res = getContext().getResources();
+//		if (newMode == PAUSE) {
+//			str = res.getText(R.string.mode_pause);
+//		}
+//		if (newMode == READY) {
+//			str = res.getText(R.string.mode_ready);
+//		}
 		if (newMode == LOSE) {
-			str = res.getString(R.string.mode_lose_prefix) + mScore
-					+ res.getString(R.string.mode_lose_suffix);
+			//TODO a final static parameter to 'FINAL SCORE';
+			mIsRunning = false;
+
+			Intent intent = new Intent(getContext(), SnakeLose.class);
+			intent.putExtra(FINAL_SCORE, mScore + "");
+			getContext().startActivity(intent);
+
+//			str = res.getString(R.string.mode_lose_prefix) + mScore
+//					+ res.getString(R.string.mode_lose_suffix);
 		}
 
 		// mStatusText.setText(str);
@@ -616,7 +631,6 @@ public class SnakeView extends SurfaceView implements Callback, Runnable {
 	 */
 	public void update() {
 		if (mMode == RUNNING) {
-Log.i("zzz", "updating .... MODE is " + mMode);
 			clearTiles();
 			updateWalls();
 			updateSnake();
@@ -728,7 +742,6 @@ Log.i("zzz", "updating .... MODE is " + mMode);
 
 		int index = 0;
 		for (Coordinate c : mSnakeTrail) {
-Log.i("zzz", "snake size is " + mSnakeTrail.size() + ", index is " + index);
 			if (index == 0) {
 				setTile(YELLOW_STAR, c.x, c.y);
 			} else {
@@ -769,7 +782,6 @@ Log.i("zzz", "snake size is " + mSnakeTrail.size() + ", index is " + index);
 	public void run() {
 		// TODO Auto-generated method stub
 		while (mIsRunning) {
-
 			/** 取得更新游戏之前的时间 **/
 			long startTime = System.currentTimeMillis();
 
@@ -779,12 +791,16 @@ Log.i("zzz", "snake size is " + mSnakeTrail.size() + ", index is " + index);
 			}
 
 			/** 在这里加上线程安全锁 **/
-			synchronized (mSurfaceHolder) {
-				/** 拿到当前画布 然后锁定 **/
-				Canvas canvas = mSurfaceHolder.lockCanvas();
-				draw(canvas);
-				/** 绘制结束后解锁显示在屏幕上 **/
-				mSurfaceHolder.unlockCanvasAndPost(canvas);
+			if(mIsRunning) {
+				synchronized (mSurfaceHolder) {
+					/** 拿到当前画布 然后锁定 **/
+					Canvas canvas = mSurfaceHolder.lockCanvas();
+					if(canvas != null) {
+						draw(canvas);
+						/** 绘制结束后解锁显示在屏幕上 **/
+						mSurfaceHolder.unlockCanvasAndPost(canvas);
+					}
+				}
 			}
 
 			/** 取得更新游戏结束的时间 **/
@@ -806,18 +822,40 @@ Log.i("zzz", "snake size is " + mSnakeTrail.size() + ", index is " + index);
 
 	public void surfaceChanged(SurfaceHolder arg0, int arg1, int arg2, int arg3) {
 		// TODO Auto-generated method stub
+		mWidth = arg2;
+		mHeight = arg3;
 
+		mXTileCount = (int) Math.floor(arg2 / mTileSize);
+		mYTileCount = (int) Math.floor(arg3 / mTileSize);
+
+		mXOffset = ((arg2 - (mTileSize * mXTileCount)) / 2);
+		mYOffset = ((arg3 - (mTileSize * mYTileCount)) / 2);
+
+		mTileGrid = new int[mXTileCount][mYTileCount];
+		clearTiles();
+
+		mPaint.setColor(Color.rgb(29, 56, 13));
+		mPaint.setTextAlign(Paint.Align.LEFT);
+		mPaint.setFakeBoldText(true);
+		mPaint.setTextSize(12);
+		mPaintR.setColor(Color.rgb(29, 56, 13));
+		mPaintR.setTextAlign(Paint.Align.RIGHT);
+
+		initNewGame();
+
+		if(!mIsRunning) {
+			mIsRunning = true;
+			setMode(RUNNING);
+			new Thread(this).start();			
+		}
 	}
 
 	public void surfaceCreated(SurfaceHolder arg0) {
 		// TODO Auto-generated method stub
-		mIsRunning = true;
-		new Thread(this).start();
 	}
 
 	public void surfaceDestroyed(SurfaceHolder arg0) {
 		// TODO Auto-generated method stub
 		mIsRunning = false;
 	}
-
 }
