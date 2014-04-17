@@ -21,14 +21,19 @@
      to come from a domain that you own or have control over. -->
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.android.snake">
-    <application android:label="Snake on a Phone">
+    <application android:label="The Snake Who is Different">
       <activity android:name="Snake"
         android:screenOrientation="portrait"
-        android:configChanges="keyboardHidden|orientation">
+        android:configChanges="keyboardHidden|orientation" android:launchMode="singleTask">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+      <activity android:name="SnakeLose"
+          android:theme="@style/transparent"
+          android:parentActivityName="com.example.android.snake.Snake" android:noHistory="true"></activity>
+      <activity android:name="Game"
+          android:parentActivityName="com.example.android.snake.Snake" android:noHistory="true"></activity>
     </application>
 </manifest> 
