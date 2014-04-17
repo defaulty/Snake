@@ -67,7 +67,7 @@ containing a value of this type.
 theme attribute (in the form
 "<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
 containing a value of this type.
-          @attr name android:tileSize
+          @attr name com.example.android.snake:tileSize
         */
         public static final int TileView_tileSize = 0;
     };
