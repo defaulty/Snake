@@ -26,12 +26,14 @@ containing a value of this type.
         public static final int padding=0x7f040000;
     }
     public static final class drawable {
-        public static final int cancel=0x7f020000;
-        public static final int greenstar=0x7f020001;
-        public static final int redstar=0x7f020002;
-        public static final int restart=0x7f020003;
-        public static final int yellowstar1=0x7f020004;
-        public static final int yellowstar2=0x7f020005;
+        public static final int apple=0x7f020000;
+        public static final int cancel=0x7f020001;
+        public static final int frog=0x7f020002;
+        public static final int greenstar=0x7f020003;
+        public static final int redstar=0x7f020004;
+        public static final int restart=0x7f020005;
+        public static final int yellowstar1=0x7f020006;
+        public static final int yellowstar2=0x7f020007;
     }
     public static final class id {
         public static final int LinearLayout1=0x7f080005;

@@ -48,11 +48,11 @@ import android.widget.TextView;
  * 
  */
 public class SnakeView extends SurfaceView implements Callback, Runnable {
-	public static final String FINAL_SCORE = "FINAL_SCORE";
+	public static final String FINAL_SCORE = "com.example.android.snake.FINAL_SCORE";
 
 	private static final String TAG = "SnakeView";
 
-	private static final int TIME_IN_FRAME = 50;
+	private static final int TIME_IN_FRAME = 25;
 	/**
 	 * Current mode of application: READY to run, RUNNING, or you have already
 	 * lost. static final ints are used instead of an enum for performance
@@ -80,15 +80,29 @@ public class SnakeView extends SurfaceView implements Callback, Runnable {
 	private static final int RED_STAR = 1;
 	private static final int YELLOW_STAR = 2;
 	private static final int GREEN_STAR = 3;
+	private static final int FROG_STAR = 4;
+	private static final int APPLE_STAR = 5;
+
+	/**
+	 * Different apple types
+	 */
+	private static final int NORMAL_APPLE = 0;
+	private static final int DECELERATE_APPLE = 1;
+	private static final int ACCELERATE_APPLE = 2;
 
 	/**
 	 * mScore: used to track the number of apples captured mMoveDelay: number of
 	 * milliseconds between snake movements. This will decrease as apples are
 	 * captured.
 	 */
+	private static final int INIT_DELAY = 300;
+	private static final int MIN_DELAY = 50;
 	private long mScore = 0;
 	private long mMoveDelay = 100;
 	private long mNextMoveDalay = 100;
+
+	private long mSpecDuration = 0;
+	private int mLastSpecAppleEat = 0;
 	/**
 	 * mLastMove: tracks the absolute time when the snake last moved, and is
 	 * used to determine if a move should be made based on mMoveDelay.
@@ -105,7 +119,7 @@ public class SnakeView extends SurfaceView implements Callback, Runnable {
 	 * mAppleList: the secret location of the juicy apples the snake craves.
 	 */
 	private ArrayList<Coordinate> mSnakeTrail = new ArrayList<Coordinate>();
-	private ArrayList<Coordinate> mAppleList = new ArrayList<Coordinate>();
+	private ArrayList<Apple> mAppleList = new ArrayList<Apple>();
 
 	/**
 	 * Everyone needs a little randomness in their life
@@ -209,10 +223,12 @@ public class SnakeView extends SurfaceView implements Callback, Runnable {
 
 		Resources r = this.getContext().getResources();
 
-		resetTiles(4);
+		resetTiles(6);
 		loadTile(RED_STAR, r.getDrawable(R.drawable.redstar));
 		loadTile(YELLOW_STAR, r.getDrawable(R.drawable.yellowstar1));
 		loadTile(GREEN_STAR, r.getDrawable(R.drawable.greenstar));
+		loadTile(FROG_STAR, r.getDrawable(R.drawable.frog));
+		loadTile(APPLE_STAR, r.getDrawable(R.drawable.apple));
 
 		mControlMode = 1;
 	}
@@ -248,22 +264,22 @@ public class SnakeView extends SurfaceView implements Callback, Runnable {
 
 		/** draw the bounder */
 		for (int x = 1; x < mXTileCount - 1; x++) {
-			canvas.drawBitmap(mTileArray[3], mXOffset + x * mTileSize,
+			canvas.drawBitmap(mTileArray[GREEN_STAR], mXOffset + x * mTileSize,
 					mYOffset, mPaint);
-			canvas.drawBitmap(mTileArray[3], mXOffset + x * mTileSize, mYOffset
+			canvas.drawBitmap(mTileArray[GREEN_STAR], mXOffset + x * mTileSize, mYOffset
 					+ 3 * mTileSize, mPaint);
-			canvas.drawBitmap(mTileArray[3], mXOffset + x * mTileSize, mYOffset
+			canvas.drawBitmap(mTileArray[GREEN_STAR], mXOffset + x * mTileSize, mYOffset
 					+ (mYTileCount - 1) * mTileSize, mPaint);
 		}
 		for (int y = 0; y < mYTileCount; y += 1) {
-			canvas.drawBitmap(mTileArray[3], mXOffset,
+			canvas.drawBitmap(mTileArray[GREEN_STAR], mXOffset,
 					mYOffset + y * mTileSize, mPaint);
-			canvas.drawBitmap(mTileArray[3], mXOffset + (mXTileCount - 1)
+			canvas.drawBitmap(mTileArray[GREEN_STAR], mXOffset + (mXTileCount - 1)
 					* mTileSize, mYOffset + y * mTileSize, mPaint);
 		}
-		canvas.drawBitmap(mTileArray[3], mXOffset + ((int) mXTileCount * 2 / 3)
+		canvas.drawBitmap(mTileArray[GREEN_STAR], mXOffset + ((int) mXTileCount * 2 / 3)
 				* mTileSize, mYOffset + mTileSize, mPaint);
-		canvas.drawBitmap(mTileArray[3], mXOffset + ((int) mXTileCount * 2 / 3)
+		canvas.drawBitmap(mTileArray[GREEN_STAR], mXOffset + ((int) mXTileCount * 2 / 3)
 				* mTileSize, mYOffset + mTileSize * 2, mPaint);
 
 		FontMetrics fontMetrics = mPaint.getFontMetrics();
@@ -287,6 +303,19 @@ public class SnakeView extends SurfaceView implements Callback, Runnable {
 					}
 				}
 			}
+
+			if(mSpecDuration > 0) {
+				Bitmap b = null;
+				if(mLastSpecAppleEat == ACCELERATE_APPLE) {
+					b = mTileArray[FROG_STAR];
+				} else {
+					b = mTileArray[APPLE_STAR];					
+				}
+				canvas.drawBitmap(b, mXOffset + ((int) mXTileCount * 2 / 3)	* mTileSize + mTileSize * 2, mYOffset + mTileSize + ((fontMetrics.bottom - fontMetrics.top) / 2),  mPaint);
+				
+//				canvas.drawText(getContext().getResources().getString(R.string.snakeview_score), mXOffset + mTileSize * 2, mYOffset + mTileSize * 3 - 5 /*((mTileSize * 2 - (fontMetrics.bottom - fontMetrics.top)) / 2)*/, mPaint);
+				canvas.drawText((int)(mSpecDuration / 1000) + "", mXOffset + ((int) mXTileCount * mTileSize) - mTileSize * 2, mYOffset + mTileSize * 3 - ((mTileSize * 2 - (fontMetrics.bottom - fontMetrics.top)) / 2), mPaintR);
+			}
 			break;
 		}
 	}
@@ -307,11 +336,11 @@ public class SnakeView extends SurfaceView implements Callback, Runnable {
 		mNextDirection = EAST;
 
 		// Two apples to start with
-		addRandomApple();
-		addRandomApple();
+		addRandomApple(NORMAL_APPLE);
+		addRandomApple(NORMAL_APPLE);
 
-		mMoveDelay = 300;
-		mNextMoveDalay = 300;
+		mMoveDelay = INIT_DELAY;
+		mNextMoveDalay = mMoveDelay;
 		mScore = 0;
 	}
 
@@ -336,25 +365,6 @@ public class SnakeView extends SurfaceView implements Callback, Runnable {
 	}
 
 	/**
-	 * Save game state so that the user does not lose anything if the game
-	 * process is killed while we are in the background.
-	 * 
-	 * @return a Bundle with this view's state
-	 */
-	public Bundle saveState() {
-		Bundle map = new Bundle();
-
-		map.putIntArray("mAppleList", coordArrayListToArray(mAppleList));
-		map.putInt("mDirection", Integer.valueOf(mDirection));
-		map.putInt("mNextDirection", Integer.valueOf(mNextDirection));
-		map.putLong("mMoveDelay", Long.valueOf(mMoveDelay));
-		map.putLong("mScore", Long.valueOf(mScore));
-		map.putIntArray("mSnakeTrail", coordArrayListToArray(mSnakeTrail));
-
-		return map;
-	}
-
-	/**
 	 * Given a flattened array of ordinate pairs, we reconstitute them into a
 	 * ArrayList of Coordinate objects
 	 * 
@@ -373,6 +383,50 @@ public class SnakeView extends SurfaceView implements Callback, Runnable {
 		return coordArrayList;
 	}
 
+	private int[] appleArrayListToArray(ArrayList<Apple> cvec) {
+		int count = cvec.size();
+		int[] rawArray = new int[count * 3];
+		for (int index = 0; index < count; index++) {
+			Apple a = cvec.get(index);
+			Coordinate c = a.getCoordinate();
+			rawArray[3 * index] = c.x;
+			rawArray[3 * index + 1] = c.y;
+			rawArray[3 * index + 2] = a.type;
+		}
+		return rawArray;
+	}
+
+	private ArrayList<Apple> appleArrayToArrayList(int[] rawArray) {
+		ArrayList<Apple> coordArrayList = new ArrayList<Apple>();
+
+		int coordCount = rawArray.length;
+		for (int index = 0; index < coordCount; index += 3) {
+			Coordinate c = new Coordinate(rawArray[index], rawArray[index + 1]);
+			Apple a = new Apple(c, rawArray[index + 2]);
+			coordArrayList.add(a);
+		}
+		return coordArrayList;
+	}
+
+	/**
+	 * Save game state so that the user does not lose anything if the game
+	 * process is killed while we are in the background.
+	 * 
+	 * @return a Bundle with this view's state
+	 */
+	public Bundle saveState() {
+		Bundle map = new Bundle();
+
+		map.putIntArray("mAppleList", appleArrayListToArray(mAppleList));
+		map.putInt("mDirection", Integer.valueOf(mDirection));
+		map.putInt("mNextDirection", Integer.valueOf(mNextDirection));
+		map.putLong("mMoveDelay", Long.valueOf(mMoveDelay));
+		map.putLong("mScore", Long.valueOf(mScore));
+		map.putIntArray("mSnakeTrail", coordArrayListToArray(mSnakeTrail));
+
+		return map;
+	}
+
 	/**
 	 * Restore game state if our process is being relaunched
 	 * 
@@ -382,7 +436,7 @@ public class SnakeView extends SurfaceView implements Callback, Runnable {
 	public void restoreState(Bundle icicle) {
 		setMode(PAUSE);
 
-		mAppleList = coordArrayToArrayList(icicle.getIntArray("mAppleList"));
+		mAppleList = appleArrayToArrayList(icicle.getIntArray("mAppleList"));
 		mDirection = icicle.getInt("mDirection");
 		mNextDirection = icicle.getInt("mNextDirection");
 		mMoveDelay = icicle.getLong("mMoveDelay");
@@ -595,7 +649,7 @@ public class SnakeView extends SurfaceView implements Callback, Runnable {
 	 * truly excellent snake-player.
 	 * 
 	 */
-	private void addRandomApple() {
+	private void addRandomApple(int type) {
 		Coordinate newCoord = null;
 		boolean found = false;
 		while (!found) {
@@ -620,7 +674,8 @@ public class SnakeView extends SurfaceView implements Callback, Runnable {
 		if (newCoord == null) {
 			Log.e(TAG, "Somehow ended up with a null newCoord!");
 		} else {
-			mAppleList.add(newCoord);			
+			Apple a = new Apple(newCoord, type);
+			mAppleList.add(a);
 		}
 	}
 
@@ -659,8 +714,15 @@ public class SnakeView extends SurfaceView implements Callback, Runnable {
 	 * 
 	 */
 	private void updateApples() {
-		for (Coordinate c : mAppleList) {
-			setTile(YELLOW_STAR, c.x, c.y);
+		for (Apple a : mAppleList) {
+			Coordinate c = a.getCoordinate();
+			if(a.type == ACCELERATE_APPLE) {
+				setTile(FROG_STAR, c.x, c.y);
+			} else if(a.type == DECELERATE_APPLE) {
+				setTile(APPLE_STAR, c.x, c.y);								
+			} else {
+				setTile(YELLOW_STAR, c.x, c.y);				
+			}
 		}
 	}
 
@@ -723,13 +785,69 @@ public class SnakeView extends SurfaceView implements Callback, Runnable {
 		// Look for apples
 		int applecount = mAppleList.size();
 		for (int appleindex = 0; appleindex < applecount; appleindex++) {
-			Coordinate c = mAppleList.get(appleindex);
+			Apple a = mAppleList.get(appleindex);
+			Coordinate c = a.getCoordinate();
 			if (c.equals(newHead)) {
-				mAppleList.remove(c);
-				addRandomApple();
+				if(a.type != NORMAL_APPLE) {
+					mSpecDuration = 10000;
+					mLastSpecAppleEat = a.type;
+					if(a.type == ACCELERATE_APPLE) {
+						mMoveDelay = mMoveDelay / 2;
+						mNextMoveDalay = mMoveDelay;
+					} else {
+						mNextMoveDalay += mMoveDelay;
+						mMoveDelay *= 2;
+					}
+				}
+				
+				mAppleList.remove(a);
 
-				mScore++;
-				mMoveDelay *= 0.9;
+				if(mScore == 0) {
+					addRandomApple(ACCELERATE_APPLE);
+				} else {
+					boolean hasSpecApple = false;
+					for(Apple app : mAppleList) {
+						if(app.type != NORMAL_APPLE) {
+							hasSpecApple = true;
+							break;
+						}
+					}
+
+					int type = NORMAL_APPLE;
+					if(!hasSpecApple && mSpecDuration <= 0) {   // won't generate special apple when snake is in special status and there is already a special apple in the garden
+						int nod1 = mSnakeTrail.size() * 10;
+						int nod2 = (int) mMoveDelay;
+						if(mScore < 200) {                      // there won't be decelerate apple where score is below 200;
+							nod2 = 0;
+						}
+						int sum = (nod1 + nod2) * 2;
+						int total = sum + nod1 + nod2;
+
+						int rand = RNG.nextInt(total);
+						if(rand > sum && rand < (sum + nod1)) {
+							type = DECELERATE_APPLE;
+						} else if(rand > (sum + nod1)) {
+							type = ACCELERATE_APPLE;
+						}
+					}
+					addRandomApple(type);
+				}
+
+				mScore += 10;
+
+				if(mSpecDuration > 0) {
+					mScore += (int) mScore * 0.1;
+				} else {
+					mMoveDelay = (int) (INIT_DELAY - ((mScore * (INIT_DELAY - MIN_DELAY) / 1000)));
+					if(mMoveDelay < MIN_DELAY) {
+						mMoveDelay = MIN_DELAY;
+					}
+					Log.i("zzz", mMoveDelay + "'");
+				}
+
+				for(int i = 0; i < mScore / 200 && mAppleList.size() < (mScore / 200 + 2); i++) {  // every each score 200 you gained, put another more apple in the garden
+					addRandomApple(NORMAL_APPLE);
+				}
 
 				growSnake = true;
 			}
@@ -751,41 +869,13 @@ public class SnakeView extends SurfaceView implements Callback, Runnable {
 		}
 	}
 
-	/**
-	 * Simple class containing two integer values and a comparison function.
-	 * There's probably something I should use instead, but this was quick and
-	 * easy to build.
-	 * 
-	 */
-	private class Coordinate {
-		public int x;
-		public int y;
-
-		public Coordinate(int newX, int newY) {
-			x = newX;
-			y = newY;
-		}
-
-		public boolean equals(Coordinate other) {
-			if (x == other.x && y == other.y) {
-				return true;
-			}
-			return false;
-		}
-
-		@Override
-		public String toString() {
-			return "Coordinate: [" + x + "," + y + "]";
-		}
-	}
-
 	public void run() {
 		// TODO Auto-generated method stub
 		while (mIsRunning) {
 			/** 取得更新游戏之前的时间 **/
 			long startTime = System.currentTimeMillis();
 
-			if(mNextMoveDalay <= 0) {
+			if((mNextMoveDalay) <= 0) {
 				update();
 				mNextMoveDalay = mMoveDelay;
 			}
@@ -817,6 +907,10 @@ public class SnakeView extends SurfaceView implements Callback, Runnable {
 			}
 
 			mNextMoveDalay -= diffTime;
+			
+			if(mSpecDuration > 0) {
+				mSpecDuration -= diffTime;
+			}
 		}
 	}
 
@@ -857,5 +951,47 @@ public class SnakeView extends SurfaceView implements Callback, Runnable {
 	public void surfaceDestroyed(SurfaceHolder arg0) {
 		// TODO Auto-generated method stub
 		mIsRunning = false;
+	}
+
+	/**
+	 * Simple class containing two integer values and a comparison function.
+	 * There's probably something I should use instead, but this was quick and
+	 * easy to build.
+	 * 
+	 */
+	private class Coordinate {
+		public int x;
+		public int y;
+
+		public Coordinate(int newX, int newY) {
+			x = newX;
+			y = newY;
+		}
+
+		public boolean equals(Coordinate other) {
+			if (x == other.x && y == other.y) {
+				return true;
+			}
+			return false;
+		}
+
+		@Override
+		public String toString() {
+			return "Coordinate: [" + x + "," + y + "]";
+		}
+	}
+
+	private class Apple {
+		public Coordinate coord;
+		public int type;
+
+		public Apple(Coordinate coord, int type) {
+			this.coord = coord;
+			this.type = type;
+		}
+		
+		public Coordinate getCoordinate() {
+			return coord;
+		}
 	}
 }
