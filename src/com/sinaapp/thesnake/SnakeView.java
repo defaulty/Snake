@@ -14,13 +14,14 @@
  * limitations under the License.
  */
 
-package com.example.android.snake;
+package com.sinaapp.thesnake;
 
 import java.util.ArrayList;
 import java.util.Random;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.content.res.TypedArray;
 import android.graphics.Bitmap;
@@ -29,18 +30,18 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Paint.FontMetrics;
 import android.graphics.drawable.Drawable;
-import android.os.Handler;
-import android.os.Message;
-import android.util.AttributeSet;
+import android.media.MediaPlayer;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
+import android.util.AttributeSet;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceHolder.Callback;
 import android.view.SurfaceView;
-import android.view.View;
 import android.widget.TextView;
+
+import com.sinaapp.thesnake.R;
 
 /**
  * SnakeView: implementation of a simple game of Snake
@@ -129,8 +130,6 @@ public class SnakeView extends SurfaceView implements Callback, Runnable {
 	private float mPressPointX;
 	private float mPressPointY;
 	
-	private static int mControlMode;
-
 	protected static int mTileSize;
 
 	protected static int mXTileCount;
@@ -153,6 +152,14 @@ public class SnakeView extends SurfaceView implements Callback, Runnable {
 
 	private boolean mIsRunning = false;
 
+	private boolean mPlaySound = true;
+	private String mPlayMode = PLAY_MODE_FOUR_WAY_MODE;
+
+	private static final String PLAY_MODE_FOUR_WAY_MODE = "1";
+	private static final String PLAY_MODE_LEFT_RIGHT_MODE = "2";
+
+	private MediaPlayer mMediaPlayer;
+
 	/**
 	 * Create a simple handler that we can use to cause animation to happen. We
 	 * set ourselves as a target and we can use the sleep() function to cause an
@@ -169,9 +176,7 @@ public class SnakeView extends SurfaceView implements Callback, Runnable {
 
 		TypedArray a = context.obtainStyledAttributes(attrs,
 				R.styleable.TileView);
-
 		mTileSize = a.getInt(R.styleable.TileView_tileSize, 12);
-
 		a.recycle();
 
 		mSurfaceHolder = this.getHolder();
@@ -185,9 +190,7 @@ public class SnakeView extends SurfaceView implements Callback, Runnable {
 
 		TypedArray a = context.obtainStyledAttributes(attrs,
 				R.styleable.TileView);
-
 		mTileSize = a.getInt(R.styleable.TileView_tileSize, 12);
-
 		a.recycle();
 
 		mSurfaceHolder = this.getHolder();
@@ -196,8 +199,8 @@ public class SnakeView extends SurfaceView implements Callback, Runnable {
 		initSnakeView();
 	}
 
-	@Override
-	protected void onSizeChanged(int w, int h, int oldw, int oldh) {
+//	@Override
+//	protected void onSizeChanged(int w, int h, int oldw, int oldh) {
 //		mWidth = w;
 //		mHeight = h;
 //
@@ -216,7 +219,7 @@ public class SnakeView extends SurfaceView implements Callback, Runnable {
 //		mPaint.setTextSize(12);
 //		mPaintR.setColor(Color.rgb(29, 56, 13));
 //		mPaintR.setTextAlign(Paint.Align.RIGHT);
-	}
+//	}
 
 	private void initSnakeView() {
 		setFocusable(true);
@@ -230,7 +233,9 @@ public class SnakeView extends SurfaceView implements Callback, Runnable {
 		loadTile(FROG_STAR, r.getDrawable(R.drawable.frog));
 		loadTile(APPLE_STAR, r.getDrawable(R.drawable.apple));
 
-		mControlMode = 1;
+		mMediaPlayer = MediaPlayer.create(getContext(), R.raw.swallow);
+		mMediaPlayer.setVolume(10.0f, 10.0f);
+//		mediaPlayer.start();		
 	}
 
 	public void resetTiles(int tilecount) {
@@ -342,6 +347,12 @@ public class SnakeView extends SurfaceView implements Callback, Runnable {
 		mMoveDelay = INIT_DELAY;
 		mNextMoveDalay = mMoveDelay;
 		mScore = 0;
+
+		SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getContext());
+		mPlaySound = sharedPref.getBoolean(SettingsFragment.KEY_PREF_SOUND, true);
+		mPlayMode = sharedPref.getString(SettingsFragment.KEY_PREF_CONTROL_MODE, "");
+
+		Log.i("zzz", mPlayMode + ",,,," + mPlaySound);
 	}
 
 	/**
@@ -491,8 +502,7 @@ public class SnakeView extends SurfaceView implements Callback, Runnable {
 					break;
 				}
 
-				switch (mControlMode) {
-				case 1:                          // Control mode I, four directions;
+				if(mPlayMode.equals(PLAY_MODE_FOUR_WAY_MODE)) {                          // Control mode I, four directions;
 					switch (mDirection) {
 					case NORTH:
 					case SOUTH:
@@ -515,25 +525,40 @@ public class SnakeView extends SurfaceView implements Callback, Runnable {
 						}
 						break;
 					}
-					break;
-				case 2:
-					//TODO Control Mode II
-//					if (currentX == mPressPointX) {
-//						if (currentX < (mWidth / 2)) {
-//							direction = -1;
-//						} else if (currentX >= (mWidth / 2)) {
-//							direction = 1;
-//						}
-//					} else if (currentX < mPressPointX) {
-//						direction = -1;
-//					} else if (currentX > mPressPointX) {
-//						direction = 1;
-//					}
-					break;
+				} else if(mPlayMode.equals(PLAY_MODE_LEFT_RIGHT_MODE)) {
+					if(currentX < mPressPointX) {
+						switch (mDirection) {
+						case NORTH:
+							mNextDirection = WEST;
+							break;
+						case WEST:
+							mNextDirection = SOUTH;
+							break;
+						case SOUTH:
+							mNextDirection = EAST;
+							break;
+						case EAST:
+							mNextDirection = NORTH;
+							break;
+						}
+					} else if(currentX > mPressPointX) {
+						switch (mDirection) {
+						case NORTH:
+							mNextDirection = EAST;
+							break;
+						case WEST:
+							mNextDirection = NORTH;
+							break;
+						case SOUTH:
+							mNextDirection = WEST;
+							break;
+						case EAST:
+							mNextDirection = SOUTH;
+							break;
+						}
+					}
 				}
-
 			}
-
 			break;
 		}
 
@@ -788,6 +813,10 @@ public class SnakeView extends SurfaceView implements Callback, Runnable {
 			Apple a = mAppleList.get(appleindex);
 			Coordinate c = a.getCoordinate();
 			if (c.equals(newHead)) {
+				if(mPlaySound) {
+					mMediaPlayer.start();
+				}
+
 				if(a.type != NORMAL_APPLE) {
 					mSpecDuration = 10000;
 					mLastSpecAppleEat = a.type;
@@ -837,12 +866,6 @@ public class SnakeView extends SurfaceView implements Callback, Runnable {
 
 				if(mSpecDuration > 0) {
 					mScore += (int) mScore * 0.1;
-				} else {
-					mMoveDelay = (int) (INIT_DELAY - ((mScore * (INIT_DELAY - MIN_DELAY) / 1000)));
-					if(mMoveDelay < MIN_DELAY) {
-						mMoveDelay = MIN_DELAY;
-					}
-					Log.i("zzz", mMoveDelay + "'");
 				}
 
 				for(int i = 0; i < mScore / 200 && mAppleList.size() < (mScore / 200 + 2); i++) {  // every each score 200 you gained, put another more apple in the garden
@@ -907,9 +930,15 @@ public class SnakeView extends SurfaceView implements Callback, Runnable {
 			}
 
 			mNextMoveDalay -= diffTime;
-			
+
 			if(mSpecDuration > 0) {
 				mSpecDuration -= diffTime;
+			}
+			if(mSpecDuration <= 0) {
+				mMoveDelay = (int) (INIT_DELAY - ((mScore * (INIT_DELAY - MIN_DELAY) / 1000)));
+				if(mMoveDelay < MIN_DELAY) {
+					mMoveDelay = MIN_DELAY;
+				}
 			}
 		}
 	}

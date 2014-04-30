@@ -1,4 +1,4 @@
-package com.example.android.snake;
+package com.sinaapp.thesnake;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.view.Window;
 import android.widget.TextView;
+import com.sinaapp.thesnake.R;
 
 public class SnakeLose extends Activity {
     @Override

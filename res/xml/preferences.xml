@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
+    <CheckBoxPreference
+        android:key="pref_sound"
+        android:title="@string/pref_sound"
+        android:summary="@string/pref_sound_summ"
+        android:defaultValue="true" />
+    <ListPreference
+        android:key="pref_control_mode"
+        android:title="@string/pref_control_mode"
+        android:dialogTitle="@string/pref_control_mode"
+        android:entries="@array/pref_control_mode_entries"
+        android:entryValues="@array/pref_control_mode_values"
+        android:defaultValue="@string/pref_control_mode_default" />
+</PreferenceScreen>

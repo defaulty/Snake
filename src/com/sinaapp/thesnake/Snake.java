@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.example.android.snake;
+package com.sinaapp.thesnake;
 
 import java.util.Timer;
 import java.util.TimerTask;
@@ -22,13 +22,13 @@ import java.util.TimerTask;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
+import android.preference.PreferenceManager;
 import android.view.KeyEvent;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
-import android.widget.TextView;
 import android.widget.Toast;
+
+import com.sinaapp.thesnake.R;
 
 /**
  * Snake: a simple game that everyone can enjoy.
@@ -40,8 +40,6 @@ import android.widget.Toast;
  * 
  */
 public class Snake extends Activity {
-    private static String ICICLE_KEY = "snake-view";
-
     /**
      * Called when Activity is first created. Turns off the title bar, sets up
      * the content views, and fires up the SnakeView.
@@ -71,9 +69,9 @@ public class Snake extends Activity {
             } else {
                 finish();
                 System.exit(0);
-            }  
+            }
         }
-        return false;  
+        return false;
     }
 
     @Override
@@ -84,20 +82,8 @@ public class Snake extends Activity {
         requestWindowFeature(Window.FEATURE_NO_TITLE);
 
         setContentView(R.layout.snake_start_layout);
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-
-        // Pause the game along with the activity
-//        mSnakeView.setMode(SnakeView.PAUSE);
-    }
-
-    @Override
-    public void onSaveInstanceState(Bundle outState) {
-        //Store the game state
-//        outState.putBundle(ICICLE_KEY, mSnakeView.saveState());
+        
+        PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
     }
 
     public void startGame(View view) {
@@ -123,5 +109,15 @@ public class Snake extends Activity {
 //                mSnakeView.setMode(SnakeView.PAUSE);
 //            }
 //        }
+    }
+
+    public void startTutorial(View view) {
+		Intent intent = new Intent(this, TutorialActivity.class);
+		startActivity(intent);
+    }
+
+    public void startSettings(View view) {
+		Intent intent = new Intent(this, SettingsActivity.class);
+		startActivity(intent);
     }
 }

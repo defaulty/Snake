@@ -32,6 +32,7 @@
             android:id="@+id/imageButton5"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:onClick="startTutorial"
             android:src="@drawable/greenstar" />
 
         <ImageButton
@@ -75,7 +76,9 @@
             android:id="@+id/imageButton4"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:onClick="startSettings"
             android:src="@drawable/greenstar" />
+
     </LinearLayout>
 
 </LinearLayout>

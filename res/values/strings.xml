@@ -25,4 +25,9 @@
     <string name="snake_layout_text_text"></string>
     <string name="snakeview_score">SCORE</string>
     <string name="quit_tips">Another Press To Exit</string>
+
+    <string name="pref_sound">SOUND</string>
+    <string name="pref_sound_summ">Turn On/Off Sound</string>
+    <string name="pref_control_mode">CONTROL MODE</string>
+    <string name="pref_control_mode_default">CONTROL MODE I</string>
 </resources>
