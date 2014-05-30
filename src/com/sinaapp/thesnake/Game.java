@@ -4,11 +4,12 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Window;
-
 import com.sinaapp.thesnake.R;
 
 public class Game extends Activity {
     private static String ICICLE_KEY = "snake-view";
+
+	private static final String abc = "abc";
 
     public SnakeView mSnakeView;
 
