@@ -7,6 +7,7 @@ import android.media.SoundPool;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Window;
+import com.tendcloud.tenddata.TCAgent;
 
 public class GameActivity extends Activity {
 	private static final String GAME_SAVE = "game_save";
@@ -64,7 +65,8 @@ public class GameActivity extends Activity {
 	protected void onPause() {
 		Log.i("zzz", "GameActivity onPause");
 		super.onPause();
-
+		TCAgent.onPause(this);
+		
 		if(mSoundPool != null && mBackGroundStreamId > 0) {
 			mSoundPool.pause(mBackGroundStreamId);
 			mIsBackStreamPaused = true;
@@ -104,6 +106,7 @@ public class GameActivity extends Activity {
 	protected void onResume() {
 		Log.i("zzz", "GameActivity onResume");
 		super.onResume();
+		TCAgent.onResume(this);
 
 		if (mSoundPool != null && mBackGroundStreamId > 0 && mIsBackStreamPaused) {
 			mSoundPool.resume(mBackGroundStreamId);

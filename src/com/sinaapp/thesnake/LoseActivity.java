@@ -7,7 +7,9 @@ import android.os.Bundle;
 import android.view.View;
 import android.view.Window;
 import android.widget.TextView;
+
 import com.sinaapp.thesnake.R;
+import com.tendcloud.tenddata.TCAgent;
 
 public class LoseActivity extends Activity {
 	private static final String BEST_SCORE = "BEST SCORE";
@@ -49,4 +51,16 @@ public class LoseActivity extends Activity {
 		Intent intent = new Intent(this, MainActivity.class);
 		startActivity(intent);
     }
+    
+	@Override
+	protected void onPause() {
+		super.onPause();
+		TCAgent.onPause(this);
+	}
+
+	@Override
+	protected void onResume() {
+		super.onResume();
+		TCAgent.onResume(this);
+	}
 }

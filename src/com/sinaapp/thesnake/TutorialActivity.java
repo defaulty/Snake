@@ -1,12 +1,16 @@
 package com.sinaapp.thesnake;
 
 import android.app.FragmentManager;
+
+import com.tendcloud.tenddata.TCAgent;
+
 import android.os.Bundle;
 import android.support.v13.app.FragmentStatePagerAdapter;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.view.Window;
+
 import com.sinaapp.thesnake.R;
 
 public class TutorialActivity extends FragmentActivity {
@@ -43,4 +47,16 @@ public class TutorialActivity extends FragmentActivity {
             return NUM_PAGES;
         }
     }
+    
+	@Override
+	protected void onPause() {
+		super.onPause();
+		TCAgent.onPause(this);
+	}
+
+	@Override
+	protected void onResume() {
+		super.onResume();
+		TCAgent.onResume(this);
+	}
 }

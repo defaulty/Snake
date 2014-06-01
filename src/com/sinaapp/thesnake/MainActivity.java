@@ -35,6 +35,8 @@ import com.tencent.mm.sdk.openapi.WXAPIFactory;
 import com.tencent.mm.sdk.openapi.WXMediaMessage;
 import com.tencent.mm.sdk.openapi.WXTextObject;
 
+import com.tendcloud.tenddata.TCAgent;
+
 /**
  * Snake: a simple game that everyone can enjoy.
  * 
@@ -88,6 +90,11 @@ public class MainActivity extends Activity {
 
         // No Title bar
         requestWindowFeature(Window.FEATURE_NO_TITLE);
+        
+        //TalkingData SDK initialize
+        com.tendcloud.tenddata.TCAgent.init(this);
+        //Let TalkingData collect uncaught exception automatically
+        TCAgent.setReportUncaughtExceptions(true);
 
         setContentView(R.layout.snake_start_layout);
 
@@ -145,4 +152,16 @@ public class MainActivity extends Activity {
 
     	apiIwxapi.sendReq(req);
     }
+
+	@Override
+	protected void onPause() {
+		super.onPause();
+		TCAgent.onPause(this);
+	}
+
+	@Override
+	protected void onResume() {
+		super.onResume();
+		TCAgent.onResume(this);
+	}
 }
