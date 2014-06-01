@@ -31,7 +31,7 @@
             android:background="@color/background"
             android:gravity="center"
             android:padding="@dimen/padding"
-            android:text="TextView" />
+            android:text="BestScore : 99999" />
 
     </LinearLayout>
 

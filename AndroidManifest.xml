@@ -21,8 +21,8 @@
      to come from a domain that you own or have control over. -->
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.sinaapp.thesnake">
-    <application android:label="The Snake Who is Different">
-      <activity android:name="com.sinaapp.thesnake.Snake"
+    <application android:label="The Snake is Different">
+      <activity android:name="com.sinaapp.thesnake.MainActivity"
         android:screenOrientation="portrait"
         android:configChanges="keyboardHidden|orientation" android:launchMode="singleTask">
             <intent-filter>
@@ -30,12 +30,12 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-      <activity android:name="com.sinaapp.thesnake.SnakeLose"
+      <activity android:name="com.sinaapp.thesnake.LoseActivity"
           android:theme="@style/transparent"
-          android:parentActivityName="com.sinaapp.thesnake.Snake" android:noHistory="true"></activity>
-      <activity android:name="com.sinaapp.thesnake.Game"
-          android:parentActivityName="com.sinaapp.thesnake.Snake" android:noHistory="true"></activity>
-      <activity android:name="com.sinaapp.thesnake.TutorialActivity" android:noHistory="true"></activity>
+          android:parentActivityName="com.sinaapp.thesnake.MainActivity" android:noHistory="true" android:launchMode="singleInstance"></activity>
+      <activity android:name="com.sinaapp.thesnake.GameActivity"
+          android:parentActivityName="com.sinaapp.thesnake.MainActivity" android:noHistory="true" android:launchMode="singleInstance"></activity>
+      <activity android:name="com.sinaapp.thesnake.TutorialActivity" android:noHistory="true" android:launchMode="singleInstance"></activity>
       <activity android:name="SettingsActivity" android:noHistory="true"></activity>
     </application>
 </manifest> 
