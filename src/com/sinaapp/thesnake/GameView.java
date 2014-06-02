@@ -18,7 +18,6 @@ package com.sinaapp.thesnake;
 
 import java.util.ArrayList;
 import java.util.Random;
-
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -288,21 +287,7 @@ public class GameView extends SurfaceView implements Callback, Runnable {
 		FontMetrics fontMetrics = mPaint.getFontMetrics();
 		canvas.drawText(
 				getContext().getResources().getString(R.string.snakeview_score),
-				mXOffset + mTileSize * 2, mYOffset + mTileSize * 3 - 5 /*
-																		 * ((
-																		 * mTileSize
-																		 * * 2 -
-																		 * (
-																		 * fontMetrics
-																		 * .
-																		 * bottom
-																		 * -
-																		 * fontMetrics
-																		 * .
-																		 * top))
-																		 * / 2)
-																		 */,
-				mPaint);
+				mXOffset + mTileSize * 2, mYOffset + mTileSize * 3 - 5, mPaint);
 		canvas.drawText(
 				mScore + "",
 				mXOffset + ((int) mXTileCount * 2 / 3) * mTileSize - mTileSize,
@@ -316,7 +301,10 @@ public class GameView extends SurfaceView implements Callback, Runnable {
 		case READY:
 			break;
 		case PAUSE:
-			canvas.drawText("PAUSED", 300, 300, mPaintR);
+			Paint paint = new Paint();
+			paint.setTextSize(20);
+			paint.setColor(Color.rgb(29, 56, 13));
+			canvas.drawText(getContext().getString(R.string.mode_pause), 30, mHeight * 2 / 5, paint);
 			break;
 		case LOSE:
 			canvas.drawARGB(155, 0, 0, 0);
@@ -390,8 +378,6 @@ public class GameView extends SurfaceView implements Callback, Runnable {
 				true);
 		mPlayMode = sharedPref.getString(
 				SettingsFragment.KEY_PREF_CONTROL_MODE, "");
-
-		Log.i("zzz", mPlayMode + ",,,," + mPlaySound);
 	}
 
 	/**
@@ -697,7 +683,6 @@ public class GameView extends SurfaceView implements Callback, Runnable {
 		// str = res.getText(R.string.mode_ready);
 		// }
 		if (newMode == LOSE) {
-			// TODO a final static parameter to 'FINAL SCORE';
 			mIsRunning = false;
 
 			Intent intent = new Intent(getContext(), LoseActivity.class);
@@ -977,7 +962,7 @@ public class GameView extends SurfaceView implements Callback, Runnable {
 	// modify backgroud music play rate 0.5~2.0
 	private void setBackGroundStreamRate() {
 		float rate = 0f;
-		if(mMoveDelay < INIT_DELAY) {
+		if (mMoveDelay < INIT_DELAY) {
 			rate = 2f - ((mMoveDelay - MIN_DELAY + 0f) / (INIT_DELAY - MIN_DELAY));
 		} else {
 			rate = (INIT_DELAY + 0f) / mMoveDelay;
@@ -987,7 +972,6 @@ public class GameView extends SurfaceView implements Callback, Runnable {
 	}
 
 	public void run() {
-		// TODO Auto-generated method stub
 		while (mIsRunning) {
 			/** 取得更新游戏之前的时间 **/
 			long startTime = System.currentTimeMillis();
@@ -1075,11 +1059,9 @@ public class GameView extends SurfaceView implements Callback, Runnable {
 	}
 
 	public void surfaceCreated(SurfaceHolder arg0) {
-		// TODO Auto-generated method stub
 	}
 
 	public void surfaceDestroyed(SurfaceHolder arg0) {
-		// TODO Auto-generated method stub
 		mIsRunning = false;
 	}
 

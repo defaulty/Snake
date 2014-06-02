@@ -34,7 +34,6 @@ import com.tencent.mm.sdk.openapi.SendMessageToWX;
 import com.tencent.mm.sdk.openapi.WXAPIFactory;
 import com.tencent.mm.sdk.openapi.WXMediaMessage;
 import com.tencent.mm.sdk.openapi.WXTextObject;
-
 import com.tendcloud.tenddata.TCAgent;
 
 /**
@@ -101,6 +100,7 @@ public class MainActivity extends Activity {
         PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
 
         apiIwxapi = WXAPIFactory.createWXAPI(this, APP_ID, true);
+        apiIwxapi.registerApp(APP_ID);
     }
 
     public void startGame(View view) {
@@ -139,19 +139,31 @@ public class MainActivity extends Activity {
     }
 
     public void sendToWX(View view) {
-    	WXTextObject object = new WXTextObject();
-    	object.text = "Hello WXChat !";
-    	
-    	WXMediaMessage msg = new WXMediaMessage();
-    	msg.mediaObject = object;
-    	msg.description = "hello wechat!";
-    	
-    	SendMessageToWX.Req req = new SendMessageToWX.Req();
-    	req.transaction = String.valueOf(System.currentTimeMillis());
-    	req.message = msg;
+		// 初始化一个WXTextObject对象
+		WXTextObject textObj = new WXTextObject();
+		textObj.text = "Hello WeChat!";
 
-    	apiIwxapi.sendReq(req);
+		// 用WXTextObject对象初始化一个WXMediaMessage对象
+		WXMediaMessage msg = new WXMediaMessage();
+		msg.mediaObject = textObj;
+		// 发送文本类型的消息时，title字段不起作用
+		// msg.title = "Will be ignored";
+		msg.description = "Hello WeChar!";
+
+		// 构造一个Req
+		SendMessageToWX.Req req = new SendMessageToWX.Req();
+		req.transaction = buildTransaction("text"); // transaction字段用于唯一标识一个请求
+		req.message = msg;
+		req.scene = SendMessageToWX.Req.WXSceneSession;
+		
+		// 调用api接口发送数据到微信
+		apiIwxapi.sendReq(req);
+//		finish();
     }
+    
+	private String buildTransaction(final String type) {
+		return (type == null) ? String.valueOf(System.currentTimeMillis()) : type + System.currentTimeMillis();
+	}
 
 	@Override
 	protected void onPause() {

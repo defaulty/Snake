@@ -24,14 +24,20 @@
      to come from a domain that you own or have control over.
 -->
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.sinaapp.thesnake" >
+    package="com.sinaapp.thesnake"
+    android:versionCode="1"
+    android:versionName="1.0" >
+
+    <uses-sdk
+        android:minSdkVersion="4"
+        android:targetSdkVersion="19" />
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
-	<uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
-    
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+
     <application android:label="The Snake is Different" >
         <activity
             android:name="com.sinaapp.thesnake.MainActivity"
