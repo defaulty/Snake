@@ -18,6 +18,9 @@ package com.sinaapp.thesnake;
 
 import java.util.ArrayList;
 import java.util.Random;
+
+import com.tendcloud.tenddata.x;
+
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -32,6 +35,7 @@ import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.AttributeSet;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
@@ -79,6 +83,16 @@ public class GameView extends SurfaceView implements Callback, Runnable {
 	private static final int GREEN_STAR = 3;
 	private static final int FROG_STAR = 4;
 	private static final int APPLE_STAR = 5;
+	private static final int SNAKE_HEAD_FORWARD_NORTH = 6;
+	private static final int SNAKE_HEAD_FORWARD_EAST = 7;
+	private static final int SNAKE_HEAD_FORWARD_SOUTH = 8;
+	private static final int SNAKE_HEAD_FORWARD_WEST = 9;
+	private static final int SNAKE_BODY_EAST_WEST = 10;
+	private static final int SNAKE_BODY_NORTH_SOUTH = 11;
+	private static final int SNAKE_TAIL_FORWARD_NORTH = 12;
+	private static final int SNAKE_TAIL_FORWARD_EAST = 13;
+	private static final int SNAKE_TAIL_FORWARD_SOUTH = 14;
+	private static final int SNAKE_TAIL_FORWARD_WEST = 15;
 
 	/**
 	 * Different apple types
@@ -154,6 +168,8 @@ public class GameView extends SurfaceView implements Callback, Runnable {
 	private static final String PLAY_MODE_FOUR_WAY_MODE = "1";
 	private static final String PLAY_MODE_LEFT_RIGHT_MODE = "2";
 
+	private float mScaledDensity;
+
 	/**
 	 * Create a simple handler that we can use to cause animation to happen. We
 	 * set ourselves as a target and we can use the sleep() function to cause an
@@ -168,29 +184,31 @@ public class GameView extends SurfaceView implements Callback, Runnable {
 	public GameView(Context context, AttributeSet attrs, int defStyle) {
 		super(context, attrs, defStyle);
 
-		TypedArray a = context.obtainStyledAttributes(attrs,
-				R.styleable.TileView);
-		mTileSize = a.getInt(R.styleable.TileView_tileSize, 12);
-		a.recycle();
+		// TypedArray a = context.obtainStyledAttributes(attrs,
+		// R.styleable.TileView);
+		// mTileSize = a.getInt(R.styleable.TileView_tileSize, 24);
+		// a.recycle();
+		// Log.i("zzz", mTileSize + "");
 
 		mSurfaceHolder = this.getHolder();
 		mSurfaceHolder.addCallback(this);
 
-		initSnakeView();
+		// initSnakeView();
 	}
 
 	public GameView(Context context, AttributeSet attrs) {
 		super(context, attrs);
 
-		TypedArray a = context.obtainStyledAttributes(attrs,
-				R.styleable.TileView);
-		mTileSize = a.getInt(R.styleable.TileView_tileSize, 12);
-		a.recycle();
+		// TypedArray a = context.obtainStyledAttributes(attrs,
+		// R.styleable.TileView);
+		// mTileSize = a.getInt(R.styleable.TileView_tileSize, 24);
+		// a.recycle();
+		// Log.i("zzz", mTileSize + "");
 
 		mSurfaceHolder = this.getHolder();
 		mSurfaceHolder.addCallback(this);
 
-		initSnakeView();
+		// initSnakeView();
 	}
 
 	// @Override
@@ -220,16 +238,28 @@ public class GameView extends SurfaceView implements Callback, Runnable {
 
 		Resources r = this.getContext().getResources();
 
-		resetTiles(6);
+		resetTiles(16);
 		loadTile(RED_STAR, r.getDrawable(R.drawable.redstar));
 		loadTile(YELLOW_STAR, r.getDrawable(R.drawable.yellowstar1));
 		loadTile(GREEN_STAR, r.getDrawable(R.drawable.greenstar));
 		loadTile(FROG_STAR, r.getDrawable(R.drawable.frog));
 		loadTile(APPLE_STAR, r.getDrawable(R.drawable.apple));
+		loadTile(SNAKE_HEAD_FORWARD_NORTH, r.getDrawable(R.drawable.redstar));
+		loadTile(SNAKE_HEAD_FORWARD_EAST, r.getDrawable(R.drawable.yellowstar1));
+		loadTile(SNAKE_HEAD_FORWARD_SOUTH, r.getDrawable(R.drawable.greenstar));
+		loadTile(SNAKE_HEAD_FORWARD_WEST, r.getDrawable(R.drawable.frog));
+		loadTile(SNAKE_BODY_EAST_WEST, r.getDrawable(R.drawable.apple));
+		loadTile(SNAKE_BODY_NORTH_SOUTH, r.getDrawable(R.drawable.frog));
+		loadTile(SNAKE_TAIL_FORWARD_NORTH, r.getDrawable(R.drawable.redstar));
+		loadTile(SNAKE_TAIL_FORWARD_EAST, r.getDrawable(R.drawable.yellowstar1));
+		loadTile(SNAKE_TAIL_FORWARD_SOUTH, r.getDrawable(R.drawable.greenstar));
+		loadTile(SNAKE_TAIL_FORWARD_WEST, r.getDrawable(R.drawable.apple));
 
 		// mMediaPlayer = MediaPlayer.create(getContext(), R.raw.swallow);
 		// mMediaPlayer.setVolume(10.0f, 10.0f);
 		// mediaPlayer.start();
+		DisplayMetrics dm = getContext().getResources().getDisplayMetrics();
+		mScaledDensity = dm.scaledDensity;
 	}
 
 	public void resetTiles(int tilecount) {
@@ -287,24 +317,23 @@ public class GameView extends SurfaceView implements Callback, Runnable {
 		FontMetrics fontMetrics = mPaint.getFontMetrics();
 		canvas.drawText(
 				getContext().getResources().getString(R.string.snakeview_score),
-				mXOffset + mTileSize * 2, mYOffset + mTileSize * 3 - 5, mPaint);
-		canvas.drawText(
-				mScore + "",
-				mXOffset + ((int) mXTileCount * 2 / 3) * mTileSize - mTileSize,
-				mYOffset
-						+ mTileSize
-						* 3
-						- ((mTileSize * 2 - (fontMetrics.bottom - fontMetrics.top)) / 2),
-				mPaintR);
+				mXOffset + mTileSize * 1.5f, mYOffset + mTileSize * 2
+						+ (-fontMetrics.top + fontMetrics.bottom) / 2
+						- fontMetrics.bottom, mPaint);
+		canvas.drawText(mScore + "", mXOffset + ((int) mXTileCount * 2 / 3)
+				* mTileSize - (mTileSize * 0.5f), mYOffset + mTileSize * 2
+				+ (-fontMetrics.top + fontMetrics.bottom) / 2
+				- fontMetrics.bottom, mPaintR);
 
 		switch (mMode) {
 		case READY:
 			break;
 		case PAUSE:
 			Paint paint = new Paint();
-			paint.setTextSize(20);
+			paint.setTextSize(20 * mScaledDensity);
 			paint.setColor(Color.rgb(29, 56, 13));
-			canvas.drawText(getContext().getString(R.string.mode_pause), 30, mHeight * 2 / 5, paint);
+			canvas.drawText(getContext().getString(R.string.mode_pause), mTileSize * 1.5f,
+					mHeight * 2 / 5, paint);
 			break;
 		case LOSE:
 			canvas.drawARGB(155, 0, 0, 0);
@@ -328,22 +357,12 @@ public class GameView extends SurfaceView implements Callback, Runnable {
 					b = mTileArray[APPLE_STAR];
 				}
 				canvas.drawBitmap(b, mXOffset + ((int) mXTileCount * 2 / 3)
-						* mTileSize + mTileSize * 2, mYOffset + mTileSize
-						+ ((fontMetrics.bottom - fontMetrics.top) / 2), mPaint);
-
-				// canvas.drawText(getContext().getResources().getString(R.string.snakeview_score),
-				// mXOffset + mTileSize * 2, mYOffset + mTileSize * 3 - 5
-				// /*((mTileSize * 2 - (fontMetrics.bottom - fontMetrics.top)) /
-				// 2)*/, mPaint);
-				canvas.drawText(
-						(int) (mSpecDuration / 1000) + "",
-						mXOffset + ((int) mXTileCount * mTileSize) - mTileSize
-								* 2,
-						mYOffset
-								+ mTileSize
-								* 3
-								- ((mTileSize * 2 - (fontMetrics.bottom - fontMetrics.top)) / 2),
-						mPaintR);
+						* mTileSize + mTileSize * 2, mYOffset + mTileSize * 1.5f, mPaint);
+				canvas.drawText((int) (mSpecDuration / 1000) + "", mXOffset
+						+ ((int) mXTileCount * mTileSize) - mTileSize * 1.5f,
+						mYOffset + mTileSize * 2
+								+ (-fontMetrics.top + fontMetrics.bottom) / 2
+								- fontMetrics.bottom, mPaintR);
 			}
 			break;
 		}
@@ -949,12 +968,47 @@ public class GameView extends SurfaceView implements Callback, Runnable {
 		}
 
 		int index = 0;
+		Coordinate lastCoord = null;
 		for (Coordinate c : mSnakeTrail) {
+			// snake head
 			if (index == 0) {
-				setTile(YELLOW_STAR, c.x, c.y);
+				switch (mNextDirection) {
+				case NORTH:
+					setTile(SNAKE_HEAD_FORWARD_NORTH, c.x, c.y);
+					break;
+				case EAST:
+					setTile(SNAKE_HEAD_FORWARD_EAST, c.x, c.y);
+					break;
+				case SOUTH:
+					setTile(SNAKE_HEAD_FORWARD_SOUTH, c.x, c.y);
+					break;
+				case WEST:
+					setTile(SNAKE_HEAD_FORWARD_WEST, c.x, c.y);
+					break;
+				default:
+					break;
+				}
+				// snake body
+			} else if (index < mSnakeTrail.size() - 1) {
+				if (c.x == lastCoord.x) {
+					setTile(SNAKE_BODY_EAST_WEST, c.x, c.y);
+				} else if (c.y == lastCoord.y) {
+					setTile(SNAKE_BODY_NORTH_SOUTH, c.x, c.y);
+				}
+				// snake tail
 			} else {
-				setTile(RED_STAR, c.x, c.y);
+				if (c.x < lastCoord.x) {
+					setTile(SNAKE_TAIL_FORWARD_WEST, c.x, c.y);
+				} else if (c.x > lastCoord.x) {
+					setTile(SNAKE_TAIL_FORWARD_EAST, c.x, c.y);
+				} else if (c.y < lastCoord.y) {
+					setTile(SNAKE_TAIL_FORWARD_NORTH, c.x, c.y);
+				} else if (c.y > lastCoord.y) {
+					setTile(SNAKE_TAIL_FORWARD_SOUTH, c.x, c.y);
+				}
 			}
+
+			lastCoord = c;
 			index++;
 		}
 	}
@@ -1030,8 +1084,12 @@ public class GameView extends SurfaceView implements Callback, Runnable {
 		mWidth = arg2;
 		mHeight = arg3;
 
-		mXTileCount = (int) Math.floor(arg2 / mTileSize);
+		// mXTileCount = (int) Math.floor(arg2 / mTileSize);
+		mXTileCount = 20;
+		mTileSize = (int) Math.floor(arg2 / mXTileCount);
 		mYTileCount = (int) Math.floor(arg3 / mTileSize);
+
+		initSnakeView();
 
 		mXOffset = ((arg2 - (mTileSize * mXTileCount)) / 2);
 		mYOffset = ((arg3 - (mTileSize * mYTileCount)) / 2);
@@ -1042,10 +1100,12 @@ public class GameView extends SurfaceView implements Callback, Runnable {
 		mPaint.setColor(Color.rgb(29, 56, 13));
 		mPaint.setTextAlign(Paint.Align.LEFT);
 		mPaint.setFakeBoldText(true);
-		mPaint.setTextSize(12);
+		mPaint.setTextSize(15 * mScaledDensity);
 
 		mPaintR.setColor(Color.rgb(29, 56, 13));
 		mPaintR.setTextAlign(Paint.Align.RIGHT);
+		mPaintR.setFakeBoldText(true);
+		mPaintR.setTextSize(15 * mScaledDensity);
 
 		if (mMode != PAUSE) {
 			initNewGame();
