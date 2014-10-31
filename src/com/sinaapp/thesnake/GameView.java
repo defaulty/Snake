@@ -332,8 +332,8 @@ public class GameView extends SurfaceView implements Callback, Runnable {
 			Paint paint = new Paint();
 			paint.setTextSize(20 * mScaledDensity);
 			paint.setColor(Color.rgb(29, 56, 13));
-			canvas.drawText(getContext().getString(R.string.mode_pause), mTileSize * 1.5f,
-					mHeight * 2 / 5, paint);
+			canvas.drawText(getContext().getString(R.string.mode_pause),
+					mTileSize * 1.5f, mHeight * 2 / 5, paint);
 			break;
 		case LOSE:
 			canvas.drawARGB(155, 0, 0, 0);
@@ -357,7 +357,8 @@ public class GameView extends SurfaceView implements Callback, Runnable {
 					b = mTileArray[APPLE_STAR];
 				}
 				canvas.drawBitmap(b, mXOffset + ((int) mXTileCount * 2 / 3)
-						* mTileSize + mTileSize * 2, mYOffset + mTileSize * 1.5f, mPaint);
+						* mTileSize + mTileSize * 2, mYOffset + mTileSize
+						* 1.5f, mPaint);
 				canvas.drawText((int) (mSpecDuration / 1000) + "", mXOffset
 						+ ((int) mXTileCount * mTileSize) - mTileSize * 1.5f,
 						mYOffset + mTileSize * 2

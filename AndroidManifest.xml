@@ -38,11 +38,12 @@
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
 
-    <application android:label="The Snake is Different" >
+    <application android:label="Different Snake" >
         <activity
             android:name="com.sinaapp.thesnake.MainActivity"
             android:configChanges="keyboardHidden|orientation"
             android:launchMode="singleTask"
+            android:theme="@android:style/Theme.NoTitleBar.Fullscreen"
             android:screenOrientation="portrait" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

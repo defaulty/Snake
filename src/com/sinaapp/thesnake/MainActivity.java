@@ -24,8 +24,13 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.view.KeyEvent;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.View.OnClickListener;
+import android.view.View.OnTouchListener;
 import android.view.Window;
+import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.Toast;
 
 import com.sinaapp.thesnake.R;
@@ -45,7 +50,7 @@ import com.tendcloud.tenddata.TCAgent;
  * faster. Running into yourself or the walls will end the game.
  * 
  */
-public class MainActivity extends Activity {
+public class MainActivity extends Activity implements OnClickListener {
     /**
      * Called when Activity is first created. Turns off the title bar, sets up
      * the content views, and fires up the SnakeView.
@@ -68,7 +73,7 @@ public class MainActivity extends Activity {
     @Override  
     public boolean onKeyDown(int keyCode, KeyEvent event) {
 //        System.out.println("TabHost_Index.java onKeyDown");  
-        if (keyCode == KeyEvent.KEYCODE_BACK) {  
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
             if(isExit == false ) {
                 isExit = true;
                 Toast.makeText(this, getResources().getString(R.string.quit_tips), Toast.LENGTH_SHORT).show();
@@ -84,18 +89,48 @@ public class MainActivity extends Activity {
     }
 
     @Override
+    public void onClick(View v) {
+    	Intent intent;
+    	switch(v.getId()) {
+    	case R.id.gameStart:
+    		intent = new Intent(this, GameActivity.class);
+    		startActivity(intent);
+    		break;
+    	case R.id.gameTutorial:
+    		intent = new Intent(this, TutorialActivity.class);
+    		startActivity(intent);
+    		break;
+
+    	}
+    }
+
+    @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // No Title bar
-        requestWindowFeature(Window.FEATURE_NO_TITLE);
-        
         //TalkingData SDK initialize
         com.tendcloud.tenddata.TCAgent.init(this);
         //Let TalkingData collect uncaught exception automatically
         TCAgent.setReportUncaughtExceptions(true);
 
-        setContentView(R.layout.snake_start_layout);
+        setContentView(R.layout.start_layout);
+        
+		ImageButton buttonGameStart = (ImageButton) findViewById(R.id.gameStart);
+		buttonGameStart.setOnClickListener(this);
+		buttonGameStart.setOnTouchListener(new OnTouchListener() {
+			@Override
+			public boolean onTouch(View v, MotionEvent event) {
+				if (event.getAction() == MotionEvent.ACTION_DOWN) {
+					v.setBackgroundResource(R.drawable.apple);
+				} else if (event.getAction() == MotionEvent.ACTION_UP) {
+					v.setBackgroundResource(R.drawable.btn_1);
+				}
+				return false;
+			}
+		});
+
+        ImageButton buttonGameTutorial = (ImageButton)findViewById(R.id.gameTutorial);
+        buttonGameTutorial.setOnClickListener(this);
 
         PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
 
