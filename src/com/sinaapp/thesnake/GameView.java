@@ -93,6 +93,10 @@ public class GameView extends SurfaceView implements Callback, Runnable {
 	private static final int SNAKE_TAIL_FORWARD_EAST = 13;
 	private static final int SNAKE_TAIL_FORWARD_SOUTH = 14;
 	private static final int SNAKE_TAIL_FORWARD_WEST = 15;
+	private static final int SNAKE_BODY_NORTH_EAST = 16;
+	private static final int SNAKE_BODY_SOUTH_EAST = 17;
+	private static final int SNAKE_BODY_NORTH_WEST = 18;
+	private static final int SNAKE_BODY_SOUTH_WEST = 19;
 
 	/**
 	 * Different apple types
@@ -238,22 +242,27 @@ public class GameView extends SurfaceView implements Callback, Runnable {
 
 		Resources r = this.getContext().getResources();
 
-		resetTiles(16);
+		resetTiles(20);
 		loadTile(RED_STAR, r.getDrawable(R.drawable.redstar));
 		loadTile(YELLOW_STAR, r.getDrawable(R.drawable.yellowstar1));
 		loadTile(GREEN_STAR, r.getDrawable(R.drawable.greenstar));
 		loadTile(FROG_STAR, r.getDrawable(R.drawable.frog));
 		loadTile(APPLE_STAR, r.getDrawable(R.drawable.apple));
-		loadTile(SNAKE_HEAD_FORWARD_NORTH, r.getDrawable(R.drawable.redstar));
-		loadTile(SNAKE_HEAD_FORWARD_EAST, r.getDrawable(R.drawable.yellowstar1));
-		loadTile(SNAKE_HEAD_FORWARD_SOUTH, r.getDrawable(R.drawable.greenstar));
-		loadTile(SNAKE_HEAD_FORWARD_WEST, r.getDrawable(R.drawable.frog));
-		loadTile(SNAKE_BODY_EAST_WEST, r.getDrawable(R.drawable.apple));
-		loadTile(SNAKE_BODY_NORTH_SOUTH, r.getDrawable(R.drawable.frog));
-		loadTile(SNAKE_TAIL_FORWARD_NORTH, r.getDrawable(R.drawable.redstar));
-		loadTile(SNAKE_TAIL_FORWARD_EAST, r.getDrawable(R.drawable.yellowstar1));
-		loadTile(SNAKE_TAIL_FORWARD_SOUTH, r.getDrawable(R.drawable.greenstar));
-		loadTile(SNAKE_TAIL_FORWARD_WEST, r.getDrawable(R.drawable.apple));
+		loadTile(SNAKE_HEAD_FORWARD_NORTH, r.getDrawable(R.drawable.head_north));
+		loadTile(SNAKE_HEAD_FORWARD_EAST, r.getDrawable(R.drawable.head_east));
+		loadTile(SNAKE_HEAD_FORWARD_SOUTH, r.getDrawable(R.drawable.head_south));
+		loadTile(SNAKE_HEAD_FORWARD_WEST, r.getDrawable(R.drawable.head_west));
+		loadTile(SNAKE_BODY_EAST_WEST, r.getDrawable(R.drawable.body_east_west));
+		loadTile(SNAKE_BODY_NORTH_SOUTH,
+				r.getDrawable(R.drawable.body_north_south));
+		loadTile(SNAKE_TAIL_FORWARD_NORTH, r.getDrawable(R.drawable.tail_north));
+		loadTile(SNAKE_TAIL_FORWARD_EAST, r.getDrawable(R.drawable.tail_east));
+		loadTile(SNAKE_TAIL_FORWARD_SOUTH, r.getDrawable(R.drawable.tail_south));
+		loadTile(SNAKE_TAIL_FORWARD_WEST, r.getDrawable(R.drawable.tail_west));
+		loadTile(SNAKE_BODY_NORTH_EAST, r.getDrawable(R.drawable.body_north_east));
+		loadTile(SNAKE_BODY_NORTH_WEST, r.getDrawable(R.drawable.body_north_west));
+		loadTile(SNAKE_BODY_SOUTH_EAST, r.getDrawable(R.drawable.body_south_east));
+		loadTile(SNAKE_BODY_SOUTH_WEST, r.getDrawable(R.drawable.body_south_west));
 
 		// mMediaPlayer = MediaPlayer.create(getContext(), R.raw.swallow);
 		// mMediaPlayer.setVolume(10.0f, 10.0f);
@@ -336,7 +345,7 @@ public class GameView extends SurfaceView implements Callback, Runnable {
 					mTileSize * 1.5f, mHeight * 2 / 5, paint);
 			break;
 		case LOSE:
-			canvas.drawARGB(155, 0, 0, 0);
+			canvas.drawARGB(127, 0, 0, 0);
 			break;
 		case RUNNING:
 			for (int x = 1; x < mXTileCount - 1; x += 1) {
@@ -390,6 +399,7 @@ public class GameView extends SurfaceView implements Callback, Runnable {
 
 		mMoveDelay = INIT_DELAY;
 		mNextMoveDalay = mMoveDelay;
+		mSpecDuration = 0;
 		mScore = 0;
 
 		SharedPreferences sharedPref = PreferenceManager
@@ -871,8 +881,8 @@ public class GameView extends SurfaceView implements Callback, Runnable {
 			Apple a = mAppleList.get(appleindex);
 			Coordinate c = a.getCoordinate();
 			if (c.equals(newHead)) {
-				mLastSpecAppleEat = a.type;
 				if (a.type != NORMAL_APPLE) {
+					mLastSpecAppleEat = a.type;
 					mSpecDuration = 10000;
 					if (a.type == ACCELERATE_APPLE) {
 						mMoveDelay = mMoveDelay / 2;
@@ -991,10 +1001,27 @@ public class GameView extends SurfaceView implements Callback, Runnable {
 				}
 				// snake body
 			} else if (index < mSnakeTrail.size() - 1) {
-				if (c.x == lastCoord.x) {
+				Coordinate nextCoord = mSnakeTrail.get(index + 1);
+				if (nextCoord.x == lastCoord.x) {
 					setTile(SNAKE_BODY_EAST_WEST, c.x, c.y);
-				} else if (c.y == lastCoord.y) {
+				} else if (nextCoord.y == lastCoord.y) {
 					setTile(SNAKE_BODY_NORTH_SOUTH, c.x, c.y);
+				} else if (nextCoord.x < lastCoord.x && nextCoord.y < lastCoord.y && c.y == nextCoord.y) {
+					setTile(SNAKE_BODY_NORTH_EAST, c.x, c.y);
+				} else if (nextCoord.x > lastCoord.x && nextCoord.y > lastCoord.y && c.y == lastCoord.y) {
+					setTile(SNAKE_BODY_NORTH_EAST, c.x, c.y);
+				} else if (nextCoord.x < lastCoord.x && nextCoord.y > lastCoord.y && c.y == nextCoord.y) {
+					setTile(SNAKE_BODY_SOUTH_EAST, c.x, c.y);
+				} else if (nextCoord.x > lastCoord.x && nextCoord.y < lastCoord.y && c.y == lastCoord.y) {
+					setTile(SNAKE_BODY_SOUTH_EAST, c.x, c.y);
+				} else if (nextCoord.x < lastCoord.x && nextCoord.y < lastCoord.y && c.y == lastCoord.y) {
+					setTile(SNAKE_BODY_SOUTH_WEST, c.x, c.y);
+				} else if (nextCoord.x > lastCoord.x && nextCoord.y > lastCoord.y && c.y == nextCoord.y) {
+					setTile(SNAKE_BODY_SOUTH_WEST, c.x, c.y);
+				} else if (nextCoord.x < lastCoord.x && nextCoord.y > lastCoord.y && c.y == lastCoord.y) {
+					setTile(SNAKE_BODY_NORTH_WEST, c.x, c.y);
+				} else if (nextCoord.x > lastCoord.x && nextCoord.y < lastCoord.y && c.y == nextCoord.y) {
+					setTile(SNAKE_BODY_NORTH_WEST, c.x, c.y);
 				}
 				// snake tail
 			} else {

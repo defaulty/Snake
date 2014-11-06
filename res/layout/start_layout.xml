@@ -17,7 +17,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:layout_weight="8"
+            android:layout_weight="6"
             android:src="@drawable/p_1" />
 
         <ImageButton
@@ -43,8 +43,34 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="4"
+        android:layout_weight="3"
+        android:gravity="center"
         android:orientation="horizontal" >
+
+        <ImageButton
+            android:id="@+id/imageButton1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@color/game_background"
+            android:src="@drawable/settings" />
+
+        <ImageButton
+            android:id="@+id/imageButton2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@color/game_background"
+            android:src="@drawable/pengyouquan" />
+
+        <ImageButton
+            android:id="@+id/imageButton3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@color/game_background"
+            android:src="@drawable/weixin" />
+
     </LinearLayout>
 
 </LinearLayout>

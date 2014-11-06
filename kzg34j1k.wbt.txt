@@ -1,0 +1,18 @@
+﻿
+# Please enter the commit message for your changes. Lines starting
+# with '#' will be ignored, and an empty message aborts the commit.
+# On branch master
+# Changes to be committed:
+#   (use "git reset HEAD <file>..." to unstage)
+#
+#	modified:   AndroidManifest.xml
+#	new file:   res/drawable/btn_1.jpg
+#	new file:   res/drawable/p_1.jpg
+#	modified:   res/layout/snake_layout.xml
+#	modified:   res/layout/snake_lose_layout.xml
+#	modified:   res/layout/snake_start_layout.xml
+#	new file:   res/layout/start_layout.xml
+#	modified:   src/com/sinaapp/thesnake/GameView.java
+#	modified:   src/com/sinaapp/thesnake/MainActivity.java
+#
+
