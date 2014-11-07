@@ -17,7 +17,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:layout_weight="6"
+            android:layout_weight="5"
             android:src="@drawable/p_1" />
 
         <ImageButton
@@ -27,7 +27,7 @@
             android:layout_gravity="center"
             android:layout_weight="1"
             android:background="@color/game_background"
-            android:src="@drawable/btn_1" />
+            android:src="@drawable/btn_play" />
 
         <ImageButton
             android:id="@+id/gameTutorial"
@@ -35,8 +35,8 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_weight="1"
-            android:background="@color/game_background"
-            android:src="@drawable/btn_1" />
+            android:background="@drawable/btn_tutorial_down"
+            android:src="@drawable/btn_tutorial" />
 
     </LinearLayout>
 

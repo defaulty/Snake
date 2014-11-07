@@ -121,9 +121,9 @@ public class MainActivity extends Activity implements OnClickListener {
 			@Override
 			public boolean onTouch(View v, MotionEvent event) {
 				if (event.getAction() == MotionEvent.ACTION_DOWN) {
-					v.setBackgroundResource(R.drawable.apple);
+					v.setBackgroundResource(R.drawable.btn_play_down);
 				} else if (event.getAction() == MotionEvent.ACTION_UP) {
-					v.setBackgroundResource(R.drawable.btn_1);
+					v.setBackgroundResource(R.drawable.btn_play);
 				}
 				return false;
 			}
