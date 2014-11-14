@@ -20,8 +20,8 @@
             android:layout_weight="5"
             android:src="@drawable/p_1" />
 
-        <ImageButton
-            android:id="@+id/gameStart"
+        <com.ideal371.lib.IdealImageButton
+            android:id="@+id/gamePlay"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
@@ -35,7 +35,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_weight="1"
-            android:background="@drawable/btn_tutorial_down"
+            android:background="@drawable/btn_tutorial"
             android:src="@drawable/btn_tutorial" />
 
     </LinearLayout>

@@ -33,6 +33,7 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
+import com.ideal371.lib.IdealImageButton;
 import com.sinaapp.thesnake.R;
 import com.tencent.mm.sdk.openapi.IWXAPI;
 import com.tencent.mm.sdk.openapi.SendMessageToWX;
@@ -92,7 +93,7 @@ public class MainActivity extends Activity implements OnClickListener {
     public void onClick(View v) {
     	Intent intent;
     	switch(v.getId()) {
-    	case R.id.gameStart:
+    	case R.id.gamePlay:
     		intent = new Intent(this, GameActivity.class);
     		startActivity(intent);
     		break;
@@ -114,20 +115,20 @@ public class MainActivity extends Activity implements OnClickListener {
         TCAgent.setReportUncaughtExceptions(true);
 
         setContentView(R.layout.start_layout);
-        
-		ImageButton buttonGameStart = (ImageButton) findViewById(R.id.gameStart);
-		buttonGameStart.setOnClickListener(this);
-		buttonGameStart.setOnTouchListener(new OnTouchListener() {
-			@Override
-			public boolean onTouch(View v, MotionEvent event) {
-				if (event.getAction() == MotionEvent.ACTION_DOWN) {
-					v.setBackgroundResource(R.drawable.btn_play_down);
-				} else if (event.getAction() == MotionEvent.ACTION_UP) {
-					v.setBackgroundResource(R.drawable.btn_play);
-				}
-				return false;
-			}
-		});
+
+		IdealImageButton gamePlay = (IdealImageButton) findViewById(R.id.gamePlay);
+		gamePlay.setOnClickListener(this);
+//		buttonGameStart.setOnTouchListener(new OnTouchListener() {
+//			@Override
+//			public boolean onTouch(View v, MotionEvent event) {
+//				if (event.getAction() == MotionEvent.ACTION_DOWN) {
+//					v.setBackgroundResource(R.drawable.btn_play_down);
+//				} else if (event.getAction() == MotionEvent.ACTION_UP) {
+//					v.setBackgroundResource(R.drawable.btn_play);
+//				}
+//				return false;
+//			}
+//		});
 
         ImageButton buttonGameTutorial = (ImageButton)findViewById(R.id.gameTutorial);
         buttonGameTutorial.setOnClickListener(this);
