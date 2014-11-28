@@ -118,17 +118,6 @@ public class MainActivity extends Activity implements OnClickListener {
 
 		IdealImageButton gamePlay = (IdealImageButton) findViewById(R.id.gamePlay);
 		gamePlay.setOnClickListener(this);
-//		buttonGameStart.setOnTouchListener(new OnTouchListener() {
-//			@Override
-//			public boolean onTouch(View v, MotionEvent event) {
-//				if (event.getAction() == MotionEvent.ACTION_DOWN) {
-//					v.setBackgroundResource(R.drawable.btn_play_down);
-//				} else if (event.getAction() == MotionEvent.ACTION_UP) {
-//					v.setBackgroundResource(R.drawable.btn_play);
-//				}
-//				return false;
-//			}
-//		});
 
         ImageButton buttonGameTutorial = (ImageButton)findViewById(R.id.gameTutorial);
         buttonGameTutorial.setOnClickListener(this);

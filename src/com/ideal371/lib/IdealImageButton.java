@@ -1,6 +1,5 @@
 package com.ideal371.lib;
 
-
 import android.content.Context;
 import android.graphics.ColorMatrixColorFilter;
 import android.util.AttributeSet;
@@ -23,21 +22,23 @@ public class IdealImageButton extends ImageButton {
 		// TODO Auto-generated constructor stub
 		setListener();
 	}
-	
+
 	public IdealImageButton(Context context, AttributeSet attrs) {
 		super(context, attrs);
 		setListener();
 	}
-	
-	public IdealImageButton(Context context, AttributeSet attrs, int defStyleAttr) {
+
+	public IdealImageButton(Context context, AttributeSet attrs,
+			int defStyleAttr) {
 		super(context, attrs, defStyleAttr);
 		setListener();
 	}
 
-//	public IdealImageButton(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
-//		super(context, attrs, defStyleAttr, defStyleRes);
-//		setListener();
-//	}
+	// public IdealImageButton(Context context, AttributeSet attrs, int
+	// defStyleAttr, int defStyleRes) {
+	// super(context, attrs, defStyleAttr, defStyleRes);
+	// setListener();
+	// }
 
 	private void setListener() {
 		Log.i("Snake", "set listener");
