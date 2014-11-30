@@ -36,8 +36,7 @@
             android:layout_marginLeft="20dp"
             android:layout_marginRight="20dp"
             android:layout_weight="0.4"
-            android:background="@color/background"
-            android:gravity="center"
+            android:gravity="left"
             android:padding="@dimen/padding"
             android:text="BestScore : 99999" />
 
@@ -58,31 +57,38 @@
         android:gravity="top|center"
         android:orientation="horizontal" >
 
-        <ImageButton
-            android:id="@+id/gameTutorial"
-            android:layout_width="55dp"
-            android:layout_height="50dp"
-            android:onClick="onCancel"
+        <com.ideal371.lib.IdealImageButton
+            android:id="@+id/idealImageButton1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="15dp"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/cancel"
             android:src="@drawable/cancel" />
 
-        <ImageButton
-            android:id="@+id/imageButton2"
+        <com.ideal371.lib.IdealImageButton
+            android:id="@+id/idealImageButton2"
             android:layout_width="wrap_content"
-            android:layout_height="50dp"
-            android:onClick="onRestart"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="15dp"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/restart"
             android:src="@drawable/restart" />
 
-        <ImageButton
-            android:id="@+id/imageButton3"
+        <com.ideal371.lib.IdealImageButton
+            android:id="@+id/idealImageButton3"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/yellowstar1" />
+            android:layout_marginRight="15dp"
+            android:background="@drawable/weixin"
+            android:src="@drawable/weixin" />
 
-        <ImageButton
-            android:id="@+id/imageButton4"
+        <com.ideal371.lib.IdealImageButton
+            android:id="@+id/idealImageButton4"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/greenstar" />
+            android:background="@drawable/pengyouquan"
+            android:src="@drawable/pengyouquan" />
 
     </LinearLayout>
 

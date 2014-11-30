@@ -101,6 +101,10 @@ public class MainActivity extends Activity implements OnClickListener {
     		intent = new Intent(this, TutorialActivity.class);
     		startActivity(intent);
     		break;
+    	case R.id.settings:
+    		intent = new Intent(this, SettingsActivity.class);
+    		startActivity(intent);
+    		break;
 
     	}
     }
@@ -153,16 +157,6 @@ public class MainActivity extends Activity implements OnClickListener {
 //        }
     }
 
-    public void startTutorial(View view) {
-		Intent intent = new Intent(this, TutorialActivity.class);
-		startActivity(intent);
-    }
-
-    public void startSettings(View view) {
-		Intent intent = new Intent(this, SettingsActivity.class);
-		startActivity(intent);
-    }
-
     public void sendToWX(View view) {
 		// 初始化一个WXTextObject对象
 		WXTextObject textObj = new WXTextObject();
@@ -185,7 +179,7 @@ public class MainActivity extends Activity implements OnClickListener {
 		apiIwxapi.sendReq(req);
 //		finish();
     }
-    
+
 	private String buildTransaction(final String type) {
 		return (type == null) ? String.valueOf(System.currentTimeMillis()) : type + System.currentTimeMillis();
 	}

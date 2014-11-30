@@ -12,10 +12,10 @@ import com.sinaapp.thesnake.R;
 import com.tendcloud.tenddata.TCAgent;
 
 public class LoseActivity extends Activity {
-	private static final String BEST_SCORE = "BEST SCORE";
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
+    	String BEST_SCORE = getResources().getText(R.string.snakeview_bestscore).toString();
+
         super.onCreate(savedInstanceState);
 
         // No Title bar
@@ -39,7 +39,7 @@ public class LoseActivity extends Activity {
         }
 
         TextView textView = (TextView) findViewById(R.id.textView2);
-        textView.setText(getResources().getText(R.string.snakeview_score) + " : " + finalScore + "\n\n" + BEST_SCORE + " : " + bestScore);
+        textView.setText(getResources().getText(R.string.snakeview_finalscore) + finalScore + "\n\n" + BEST_SCORE + bestScore);
     }
 
     public void onRestart(View view) {

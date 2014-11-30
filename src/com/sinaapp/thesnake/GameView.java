@@ -905,8 +905,6 @@ public class GameView extends SurfaceView implements Callback, Runnable {
 					// mSoundPool.play(mNormalId, 1.0f, 1.0f, 0, 0, 1);
 				}
 
-				mAppleList.remove(a);
-
 				if (mScore == 0) {
 					addRandomApple(ACCELERATE_APPLE);
 				} else {
@@ -934,14 +932,14 @@ public class GameView extends SurfaceView implements Callback, Runnable {
 											// where score is below 200;
 							nod2 = 0;
 						}
-						int sum = (nod1 + nod2) * 2;
+						int sum = (nod1 + nod2);
 						int total = sum + nod1 + nod2;
 
 						int rand = RNG.nextInt(total);
 						if (rand > sum && rand < (sum + nod1)) {
-							type = DECELERATE_APPLE;
-						} else if (rand > (sum + nod1)) {
 							type = ACCELERATE_APPLE;
+						} else if (rand > (sum + nod1)) {
+							type = DECELERATE_APPLE;
 						}
 					}
 					addRandomApple(type);
@@ -954,10 +952,11 @@ public class GameView extends SurfaceView implements Callback, Runnable {
 				}
 
 				// for every 200 point score, put another apple into the garden
-				for (int i = 0; i < mScore / 200
-						&& mAppleList.size() < (mScore / 200 + 2); i++) {
+				for (int i = 0; mAppleList.size() < (mScore / 200 + 3); i++) {
 					addRandomApple(NORMAL_APPLE);
 				}
+
+				mAppleList.remove(a);
 
 				if (mSpecDuration <= 0 && mLastSpecAppleEat == NORMAL_APPLE) {
 					mMoveDelay = (int) (INIT_DELAY - ((mScore

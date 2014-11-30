@@ -23,6 +23,8 @@
     <string name="mode_lose_suffix">\nPress Up To Play</string>
     <string name="snake_layout_text_text"></string>
     <string name="snakeview_score">SCORE</string>
+    <string name="snakeview_finalscore">final score : </string>
+    <string name="snakeview_bestscore">your best : </string>
     <string name="quit_tips">Press Again To Exit</string>
     <string name="pref_sound">SOUND</string>
     <string name="pref_sound_summ">Turn On/Off Sound</string>
@@ -33,5 +35,6 @@
     <color name="game_background">#97C03E</color>
     <color name="background">#3500ffff</color>
     <color name="transparent">#B000</color>
+    <string name="your_best">your best</string>
 
 </resources>
