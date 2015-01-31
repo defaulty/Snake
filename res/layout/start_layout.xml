@@ -13,7 +13,7 @@
         android:orientation="vertical" >
 
         <ImageView
-            android:id="@+id/imageView1"
+            android:id="@+id/tutorialView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
@@ -61,20 +61,20 @@
             android:src="@drawable/settings" />
 
         <com.ideal371.lib.IdealImageButton
+            android:id="@+id/share_weixin"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="50dp"
+            android:background="@drawable/weixin"
+            android:src="@drawable/weixin" />
+
+        <com.ideal371.lib.IdealImageButton
             android:id="@+id/share_pengyouquan"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="50dp"
-            android:layout_marginRight="50dp"
             android:background="@drawable/pengyouquan"
             android:src="@drawable/pengyouquan" />
-
-        <com.ideal371.lib.IdealImageButton
-            android:id="@+id/share_weixin"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@drawable/weixin"
-            android:src="@drawable/weixin" />
 
     </LinearLayout>
 

@@ -23,23 +23,17 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.util.Log;
 import android.view.KeyEvent;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.View.OnTouchListener;
-import android.view.Window;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
-import com.ideal371.lib.IdealImageButton;
-import com.sinaapp.thesnake.R;
-import com.tencent.mm.sdk.openapi.IWXAPI;
-import com.tencent.mm.sdk.openapi.SendMessageToWX;
-import com.tencent.mm.sdk.openapi.WXAPIFactory;
-import com.tencent.mm.sdk.openapi.WXMediaMessage;
-import com.tencent.mm.sdk.openapi.WXTextObject;
+import com.ideal371.lib.WeixinUtil;
+import com.tencent.mm.sdk.modelbase.BaseReq;
+import com.tencent.mm.sdk.modelbase.BaseResp;
+import com.tencent.mm.sdk.openapi.IWXAPIEventHandler;
 import com.tendcloud.tenddata.TCAgent;
 
 /**
@@ -51,7 +45,7 @@ import com.tendcloud.tenddata.TCAgent;
  * faster. Running into yourself or the walls will end the game.
  * 
  */
-public class MainActivity extends Activity implements OnClickListener {
+public class MainActivity extends Activity implements OnClickListener, IWXAPIEventHandler {
     /**
      * Called when Activity is first created. Turns off the title bar, sets up
      * the content views, and fires up the SnakeView.
@@ -68,12 +62,10 @@ public class MainActivity extends Activity implements OnClickListener {
         }
     };
 
-    private static final String APP_ID = "wxdba8dc1f454d78f7";
-    private IWXAPI apiIwxapi;
+    static WeixinUtil mWeixinUtil = null;
 
-    @Override  
+    @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
-//        System.out.println("TabHost_Index.java onKeyDown");  
         if (keyCode == KeyEvent.KEYCODE_BACK) {
             if(isExit == false ) {
                 isExit = true;
@@ -90,26 +82,6 @@ public class MainActivity extends Activity implements OnClickListener {
     }
 
     @Override
-    public void onClick(View v) {
-    	Intent intent;
-    	switch(v.getId()) {
-    	case R.id.gamePlay:
-    		intent = new Intent(this, GameActivity.class);
-    		startActivity(intent);
-    		break;
-    	case R.id.gameTutorial:
-    		intent = new Intent(this, TutorialActivity.class);
-    		startActivity(intent);
-    		break;
-    	case R.id.settings:
-    		intent = new Intent(this, SettingsActivity.class);
-    		startActivity(intent);
-    		break;
-
-    	}
-    }
-
-    @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
@@ -120,68 +92,82 @@ public class MainActivity extends Activity implements OnClickListener {
 
         setContentView(R.layout.start_layout);
 
-		IdealImageButton gamePlay = (IdealImageButton) findViewById(R.id.gamePlay);
+        ImageButton gamePlay = (ImageButton) findViewById(R.id.gamePlay);
 		gamePlay.setOnClickListener(this);
-
         ImageButton buttonGameTutorial = (ImageButton)findViewById(R.id.gameTutorial);
         buttonGameTutorial.setOnClickListener(this);
+        ImageButton buttonSettings = (ImageButton)findViewById(R.id.settings);
+        buttonSettings.setOnClickListener(this);
+        ImageButton buttonShareWeixin = (ImageButton)findViewById(R.id.share_weixin);
+        buttonShareWeixin.setOnClickListener(this);
+        ImageButton buttonSharePengyouquan = (ImageButton)findViewById(R.id.share_pengyouquan);
+        buttonSharePengyouquan.setOnClickListener(this);
 
         PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
 
-        apiIwxapi = WXAPIFactory.createWXAPI(this, APP_ID, true);
-        apiIwxapi.registerApp(APP_ID);
+        mWeixinUtil = new WeixinUtil(this);
     }
 
-    public void startGame(View view) {
-		Intent intent = new Intent(this, GameActivity.class);
-		startActivity(intent);
-
-//    	mSnakeView = (SnakeView) findViewById(R.id.snake);
-//        if(mSnakeView == null) {
-//        	Log.i("zzz", "snakeview is null!!!");
-//        }
-//        mSnakeView.setMode(SnakeView.RUNNING);
-//        mSnakeView.setTextView((TextView) findViewById(R.id.text));
-
-//        if (savedInstanceState == null) {
-//            // We were just launched -- set up a new game
-//            mSnakeView.setMode(SnakeView.READY);
-//        } else {
-//            // We are being restored
-//            Bundle map = savedInstanceState.getBundle(ICICLE_KEY);
-//            if (map != null) {
-//                mSnakeView.restoreState(map);
-//            } else {
-//                mSnakeView.setMode(SnakeView.PAUSE);
-//            }
-//        }
+    @Override
+    public void onClick(View v) {
+    	Intent intent;
+    	switch(v.getId()) {
+    	case R.id.gamePlay:
+    		intent = new Intent(this, GameActivity.class);
+    		startActivity(intent);
+//    		overridePendingTransition(R.anim.right_in, R.anim.left_out);
+    		break;
+    	case R.id.gameTutorial:
+    		intent = new Intent(this, TutorialActivity.class);
+    		startActivity(intent);
+//    		overridePendingTransition(R.anim.right_in, R.anim.left_out);
+    		break;
+    	case R.id.settings:
+    		intent = new Intent(this, SettingsActivity.class);
+    		startActivity(intent);
+    		overridePendingTransition(R.anim.right_in, R.anim.left_out);
+    		break;
+    	case R.id.share_weixin:
+    		if(mWeixinUtil != null) {
+    			mWeixinUtil.sendToWX(getResources(), false, -1);
+    		}
+    		break;
+    	case R.id.share_pengyouquan:
+    		if(mWeixinUtil != null) {
+    			mWeixinUtil.sendToWX(getResources(), true, -1);
+    		}
+    		break;
+    	}
     }
-
-    public void sendToWX(View view) {
-		// 初始化一个WXTextObject对象
-		WXTextObject textObj = new WXTextObject();
-		textObj.text = "Hello WeChat!";
-
-		// 用WXTextObject对象初始化一个WXMediaMessage对象
-		WXMediaMessage msg = new WXMediaMessage();
-		msg.mediaObject = textObj;
-		// 发送文本类型的消息时，title字段不起作用
-		// msg.title = "Will be ignored";
-		msg.description = "Hello WeChar!";
-
-		// 构造一个Req
-		SendMessageToWX.Req req = new SendMessageToWX.Req();
-		req.transaction = buildTransaction("text"); // transaction字段用于唯一标识一个请求
-		req.message = msg;
-		req.scene = SendMessageToWX.Req.WXSceneSession;
+    
+	@Override
+	public void onReq(BaseReq arg0) {
+		// TODO Auto-generated method stub
 		
-		// 调用api接口发送数据到微信
-		apiIwxapi.sendReq(req);
-//		finish();
-    }
+	}
 
-	private String buildTransaction(final String type) {
-		return (type == null) ? String.valueOf(System.currentTimeMillis()) : type + System.currentTimeMillis();
+	@Override
+	public void onResp(BaseResp resp) {
+Log.i("weixinutil", resp.errCode+"");
+		// TODO Auto-generated method stub
+		int result = 0;
+
+		switch (resp.errCode) {
+		case BaseResp.ErrCode.ERR_OK:
+			result = R.string.weixinutil_errcode_success;
+			break;
+		case BaseResp.ErrCode.ERR_USER_CANCEL:
+			result = R.string.weixinutil_errcode_cancel;
+			break;
+		case BaseResp.ErrCode.ERR_AUTH_DENIED:
+			result = R.string.weixinutil_errcode_deny;
+			break;
+		default:
+			result = R.string.weixinutil_errcode_unknown;
+			break;
+		}
+
+		Toast.makeText(this, result, Toast.LENGTH_LONG).show();
 	}
 
 	@Override
@@ -194,5 +180,12 @@ public class MainActivity extends Activity implements OnClickListener {
 	protected void onResume() {
 		super.onResume();
 		TCAgent.onResume(this);
+	}
+	
+	@Override
+	protected void onDestroy() {
+		super.onDestroy();
+		mWeixinUtil.unRegister();
+		mWeixinUtil = null;
 	}
 }

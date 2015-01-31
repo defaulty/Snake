@@ -718,7 +718,6 @@ public class GameView extends SurfaceView implements Callback, Runnable {
 			Intent intent = new Intent(getContext(), LoseActivity.class);
 			intent.putExtra(FINAL_SCORE, mScore + "");
 			getContext().startActivity(intent);
-
 			// str = res.getString(R.string.mode_lose_prefix) + mScore
 			// + res.getString(R.string.mode_lose_suffix);
 		}

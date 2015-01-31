@@ -13,6 +13,7 @@ public class TutorialFragment extends Fragment {
 	public static final String ARG_PAGE = "page";
 
     private int mPageNumber;
+//    private int mResourceId[] = new int[R.drawable.tutorial_1, R.drawable.tutorial_2, R.drawable.tutorial_3];
 
     public static TutorialFragment create(int pageNumber) {
     	TutorialFragment fragment = new TutorialFragment();
@@ -34,9 +35,22 @@ public class TutorialFragment extends Fragment {
         // Inflate the layout containing a title and body text.
         ViewGroup rootView = (ViewGroup) inflater
                 .inflate(R.layout.turorial_fragment_layout, container, false);
+        
+        int resId = 0;
+        switch(mPageNumber) {
+        case 0:
+        	resId = R.drawable.tutorial_1;
+        	break;
+        case 1:
+        	resId = R.drawable.tutorial_2;
+        	break;
+        case 2:
+        	resId = R.drawable.tutorial_3;
+        	break;
+        }
 
         // Set the title view to show the page number.
-        ((ImageView) rootView.findViewById(R.id.imageView1)).setImageResource(R.drawable.apple);
+        ((ImageView) rootView.findViewById(R.id.tutorialView)).setImageResource(resId);
 
         return rootView;
     }
@@ -44,5 +58,4 @@ public class TutorialFragment extends Fragment {
     public int getPageNumber() {
         return mPageNumber;
     }
-
 }

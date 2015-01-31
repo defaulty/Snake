@@ -9,7 +9,6 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.view.Window;
 
 import com.sinaapp.thesnake.R;
 
@@ -24,7 +23,6 @@ public class TutorialActivity extends FragmentActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.tutorial_activity_layout);
 
         mPager = (ViewPager) findViewById(R.id.pager);

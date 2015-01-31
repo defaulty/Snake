@@ -1,11 +1,14 @@
 package com.sinaapp.thesnake;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.media.AudioManager;
 import android.media.SoundPool;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.Window;
 import com.tendcloud.tenddata.TCAgent;
 
@@ -13,14 +16,14 @@ public class GameActivity extends Activity {
 	private static final String GAME_SAVE = "game_save";
 
 	private SoundPool mSoundPool;
-	private int mBackGroundId;
+//	private int mBackGroundId;
 	private int mNormalId;
 	private int mAccId;
 	private int mDecId;
 	private int mLoseId;
 	private int mBackGroundStreamId;
 
-	private boolean mIsBackStreamPaused = false;
+//	private boolean mIsBackStreamPaused = false;
 
 	public GameView mGameView;
 
@@ -28,6 +31,8 @@ public class GameActivity extends Activity {
 	public static final int STREAM_ACC = 1;
 	public static final int STREAM_DEC = 2;
 	public static final int STREAM_LOSE = 3;
+	
+	private boolean mPlaySound = false;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -42,24 +47,38 @@ public class GameActivity extends Activity {
 		mGameView = (GameView) findViewById(R.id.snake);
 
 		mSoundPool = new SoundPool(5, AudioManager.STREAM_MUSIC, 0);
-		mBackGroundId = mSoundPool.load(this, R.raw.bg, 0);
+//		mBackGroundId = mSoundPool.load(this, R.raw.bg, 0);
 		mNormalId = mSoundPool.load(this, R.raw.normal, 0);
 		mAccId = mSoundPool.load(this, R.raw.acc, 0);
 		mDecId = mSoundPool.load(this, R.raw.dec, 0);
 		mLoseId = mSoundPool.load(this, R.raw.lose, 0);
+		
+		SharedPreferences sharedPref = PreferenceManager
+				.getDefaultSharedPreferences(this);
+		mPlaySound = sharedPref.getBoolean(SettingsFragment.KEY_PREF_SOUND,
+				true);
 
-		mSoundPool
-				.setOnLoadCompleteListener(new SoundPool.OnLoadCompleteListener() {
-					@Override
-					public void onLoadComplete(SoundPool soundPool,
-							int sampleId, int status) {
-						if (sampleId == mAccId) {
-							mBackGroundStreamId = mSoundPool.play(mAccId, 1.0f, 1.0f,
-									0, -1, 1);
-						}
-					}
-				});
+//		mSoundPool
+//				.setOnLoadCompleteListener(new SoundPool.OnLoadCompleteListener() {
+//					@Override
+//					public void onLoadComplete(SoundPool soundPool,
+//							int sampleId, int status) {
+//						if (sampleId == mAccId) {
+//							mBackGroundStreamId = mSoundPool.play(mAccId, 1.0f, 1.0f,
+//									0, -1, 1);
+//						}
+//					}
+//				});
 	}
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+    		Intent intent = new Intent(this, MainActivity.class);
+    		startActivity(intent);
+        }
+        return false;
+    }
 
 	@Override
 	protected void onPause() {
@@ -67,10 +86,10 @@ public class GameActivity extends Activity {
 		super.onPause();
 		TCAgent.onPause(this);
 		
-		if(mSoundPool != null && mBackGroundStreamId > 0) {
-			mSoundPool.pause(mBackGroundStreamId);
-			mIsBackStreamPaused = true;
-		}
+//		if(mSoundPool != null && mBackGroundStreamId > 0) {
+//			mSoundPool.pause(mBackGroundStreamId);
+//			mIsBackStreamPaused = true;
+//		}
 
 		int mode = mGameView.getMode();
 
@@ -108,9 +127,9 @@ public class GameActivity extends Activity {
 		super.onResume();
 		TCAgent.onResume(this);
 
-		if (mSoundPool != null && mBackGroundStreamId > 0 && mIsBackStreamPaused) {
-			mSoundPool.resume(mBackGroundStreamId);
-		}
+//		if (mSoundPool != null && mBackGroundStreamId > 0 && mIsBackStreamPaused) {
+//			mSoundPool.resume(mBackGroundStreamId);
+//		}
 
 		SharedPreferences gameSavePref = getSharedPreferences(GAME_SAVE, 0);
 
@@ -174,6 +193,10 @@ public class GameActivity extends Activity {
 	}
 
 	public void play(int id) {
+		if(!mPlaySound) {
+			return;
+		}
+
 		switch (id) {
 		case STREAM_NORMAL:
 			mSoundPool.play(mNormalId, 1.0f, 1.0f, 0, 0, 1);

@@ -12,7 +12,7 @@
      distributed under the License is distributed on an "AS IS" BASIS,
      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
      See the License for the specific language governing permissions and
-     limitations under the License.
+     limitations under the License.
 -->
 
 <resources xmlns:android="http://schemas.android.com/apk/res/android">
@@ -34,7 +34,16 @@
 
     <color name="game_background">#97C03E</color>
     <color name="background">#3500ffff</color>
-    <color name="transparent">#B000</color>
-    <string name="your_best">your best</string>
+    <color name="transparent">#66000000</color>
 
+    <string name="your_best">your best</string>
+    <string name="weixinutil_page_title">不一样的贪食蛇</string>
+    <string name="weixinutil_page_description">究竟不一样在哪里，要不要来试试呢？</string>
+    <string name="weixinutil_page_body_prefix">我在\"不一样的贪食蛇\"中吃掉了</string>
+    <string name="weixinutil_page_body_suffix">只水煮牛蛙！敢来挑战我么？</string>
+    <string name="weixinutil_errcode_success">分享成功</string>
+    <string name="weixinutil_errcode_cancel">已取消分享</string>
+    <string name="weixinutil_errcode_deny">分享失败,权限错误</string>
+    <string name="weixinutil_errcode_unknown">分享失败,系统错误</string>
+    
 </resources>

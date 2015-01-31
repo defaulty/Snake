@@ -10,6 +10,7 @@
         android:layout_height="wrap_content"
         android:layout_weight="0.618"
         android:alpha="160"
+        android:background="#AA000000"
         android:gravity="center"
         android:orientation="vertical" >
 
@@ -54,29 +55,28 @@
         android:layout_height="wrap_content"
         android:layout_weight="0.382"
         android:alpha="160"
+        android:background="#AA000000"
         android:gravity="top|center"
         android:orientation="horizontal" >
 
         <com.ideal371.lib.IdealImageButton
-            android:id="@+id/idealImageButton1"
+            android:id="@+id/btn_cancel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginRight="15dp"
-            android:layout_marginTop="10dp"
             android:background="@drawable/cancel"
             android:src="@drawable/cancel" />
 
         <com.ideal371.lib.IdealImageButton
-            android:id="@+id/idealImageButton2"
+            android:id="@+id/btn_restart"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginRight="15dp"
-            android:layout_marginTop="10dp"
             android:background="@drawable/restart"
             android:src="@drawable/restart" />
 
         <com.ideal371.lib.IdealImageButton
-            android:id="@+id/idealImageButton3"
+            android:id="@+id/btn_weixin"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginRight="15dp"
@@ -84,7 +84,7 @@
             android:src="@drawable/weixin" />
 
         <com.ideal371.lib.IdealImageButton
-            android:id="@+id/idealImageButton4"
+            android:id="@+id/btn_pengyouquan"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@drawable/pengyouquan"
